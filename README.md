@@ -2,11 +2,14 @@
 高仿iOS版网易云音乐页面左右滑动切换效果，如图所示：
 ![](./LJTabPager.gif)
 要使用也很简单，只需要
-```
-LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
-```然后给pagerVC提供一个UIViewController的数组即可，在此之前，必须先给数组里面的viewController的title属性赋值，title即为展示在tabBar上面的文字
-```
-TableViewController *controller1 = [[TableViewController alloc] init];
+
+    LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
+
+
+然后给pagerVC提供一个UIViewController的数组即可，在此之前，必须先给数组里面的viewController的title属性赋值，title即为展示在tabBar上面的文字
+
+
+    TableViewController *controller1 = [[TableViewController alloc] init];
     controller1.title = @"个性推荐";
     TableViewController *controller2 = [[TableViewController alloc] init];
     controller2.title = @"歌单";
@@ -23,4 +26,4 @@ TableViewController *controller1 = [[TableViewController alloc] init];
     TableViewController *controller8 = [[TableViewController alloc] init];
     controller8.title = @"单曲";
     pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
-    ```
+ 
