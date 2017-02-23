@@ -26,4 +26,5 @@
     TableViewController *controller8 = [[TableViewController alloc] init];
     controller8.title = @"单曲";
     pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
- 
+    
+ 若想使viewController在被选中或滑到了它时收到通知，只需服从`LJTabPagerVCDelegate`协议，然后实现`- (void)hasBeenSelectedAndShown`方法。
