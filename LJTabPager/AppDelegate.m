@@ -39,8 +39,6 @@
     controller8.title = @"单曲";
     pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];
-//    [rootVC.navigationBar setBackgroundImage:[[UIImage alloc] init]  forBarMetrics: UIBarMetricsDefault];
-//    [rootVC.navigationBar setShadowImage:[[UIImage alloc] init]];
     rootVC.edgesForExtendedLayout = UIRectEdgeNone;
     self.window.rootViewController = rootVC;
     [self.window makeKeyAndVisible];
