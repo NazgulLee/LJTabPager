@@ -14,6 +14,7 @@
 
 @property (nonatomic) NSArray *tabItems;
 @property (nonatomic) UIView *selectedLine;
+@property (nonatomic) UIView *shadowView;
 @property (nonatomic) CGFloat spacing;
 @property (nonatomic) CGFloat tabBarInitialX;
 @property (nonatomic) CGFloat tabBarLeftDestX;
@@ -50,9 +51,8 @@
 
 - (void)configureViews {
     self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.2];
-    UIView *shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
-    shadowView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.8];
-    [self addSubview:shadowView];
+
+    [self addSubview:self.shadowView];
     
     [self addSubview:self.selectedLine];
 }
@@ -124,6 +124,7 @@
     NSLog(@"spacing: %f", self.spacing);
     if (self.titles.count == 1 || self.spacing >= MIN_SPACING) {
         self.contentSize = self.bounds.size;
+       
     } else {
         NSInteger i;
         CGFloat visibleItemsWidth = totalWidth;
@@ -141,7 +142,7 @@
         NSLog(@"spacing: %f\ni: %ld", self.spacing, (long)i);
         self.contentSize = CGSizeMake(self.spacing * self.titles.count + totalWidth, self.bounds.size.height);
     }
-
+    self.shadowView.bounds = CGRectMake(0, 0, self.contentSize.width, self.shadowView.bounds.size.height);
 }
 
 - (void)recordInitialAndDestX {
@@ -228,6 +229,13 @@
         _tabBarRightDestX = self.contentSize.width - self.bounds.size.width;
     }
     return _tabBarRightDestX;
+}
+- (UIView *)shadowView {
+    if (!_shadowView) {
+        _shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
+        _shadowView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.8];
+    }
+    return _shadowView;
 }
 
 - (void)setPagerContentOffsetX:(CGFloat)pagerContentOffsetX {
