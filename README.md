@@ -2,7 +2,7 @@
 高仿iOS版网易云音乐页面左右滑动切换效果，如图所示：
 ![image1](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.PNG)
 
-![image2](http://oluwxq3sq.bkt.clouddn.com/F8862AEF-AF23-4247-BF23-8EE0B2686263.JPG)
+![image2](LJTabPager.gif)
 要使用也很简单，只需要
 
     LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
