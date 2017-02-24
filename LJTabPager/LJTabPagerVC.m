@@ -32,6 +32,8 @@
 @synthesize topTabBar = _topTabBar;
 @synthesize titles = _titles;
 @synthesize tabBarBKColor = _tabBarBKColor;
+@synthesize selectedLineColor = _selectedLineColor;
+@synthesize selectedTabItemColor = _selectedTabItemColor;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -73,25 +75,22 @@
     }
 }
 
+- (void)updateTitles {
+    NSMutableArray *titles = [[NSMutableArray alloc] initWithCapacity:self.viewControllers.count];
+    for (int i = 0; i < self.viewControllers.count; i++) {
+        UIViewController *controller = self.viewControllers[i];
+        [titles addObject:controller.title];
+    }
+    self.titles = [NSArray arrayWithArray:titles];
+}
+
 #pragma UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    //NSLog(@"content offset: %@", NSStringFromCGPoint(scrollView.contentOffset));
-    //NSLog(@"%s", __FUNCTION__);
+
     if (isScrollCausedByDragging) {
         self.topTabBar.pagerContentOffsetX = scrollView.contentOffset.x;
     }
-//    if (1 < self.topTabBar.selectedIndex && self.topTabBar.selectedIndex < self.viewControllers.count - 2) {
-//        if (scrollView.contentOffset.x - initialContentOffsetX > 0) {
-//            self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
-//        } else if (scrollView.contentOffset.x - initialContentOffsetX < 0) {
-//            self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_LEFT;
-//        } else {
-//            self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_NONE;
-//        }
-//    } else {
-//        self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_NONE;
-//    }
     if (scrollView.contentOffset.x - initialContentOffsetX > 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
     } else if (scrollView.contentOffset.x - initialContentOffsetX < 0) {
@@ -134,7 +133,9 @@
 
 - (LJPagerTabBar *)topTabBar {
     if (!_topTabBar) {
-        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 64, self.view.bounds.size.width, PAGERTABBAR_HEIGHT)];
+        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 64, self.view.bounds.size.width, PAGERTABBAR_HEIGHT)]; //这里由于使用了self.view，若这时self.view还没有load，会先执行[self loadView]和[self viewDidLoad]
+        //[self view];
+//        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, PAGERTABBAR_HEIGHT)];
         _topTabBar.backgroundColor = self.tabBarBKColor;
         _topTabBar.pagerTabBarDelegate = self;
     }
@@ -150,7 +151,7 @@
         //_scrollView.clipsToBounds = YES;
         _scrollView.directionalLockEnabled = YES;
         _scrollView.delaysContentTouches = YES;
-        _scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * self.viewControllers.count, self.view.bounds.size.height);
+        //_scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * self.viewControllers.count, self.view.bounds.size.height);
         _scrollView.frame = CGRectMake(0, 64, self.view.bounds.size.width, self.view.bounds.size.height);
         _scrollView.backgroundColor = [UIColor yellowColor];
     }
@@ -158,14 +159,41 @@
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers {
+    if (_viewControllers.count > 0) {
+        for (int i = 0; i < _viewControllers.count; i++) {
+            UIViewController *controller = _viewControllers[i];
+            [controller willMoveToParentViewController:nil];
+            [controller.view removeFromSuperview];
+            [controller removeFromParentViewController];
+        }
+        _viewControllers = nil;
+    }
     _viewControllers = viewControllers;
+    self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * viewControllers.count, self.view.bounds.size.height);
     for (int i = 0; i < viewControllers.count; i++) {
         UIViewController *controller = viewControllers[i];
         [self addChildViewController:controller];
         controller.view.frame = CGRectMake(self.scrollView.bounds.size.width * i, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self.scrollView addSubview:controller.view];
         [controller didMoveToParentViewController:self];
+        
     }
+    
+    [self updateTitles];
+//    UIView *myView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+//    myView1.backgroundColor = [UIColor redColor];
+//    [self.topTabBar addSubview:myView1];
+//    UIView *myView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+//    myView2.backgroundColor = [UIColor greenColor];
+//    [self.scrollView addSubview:myView2];
+//    for (UIView *subView in self.topTabBar.subviews) {
+//        NSLog(@"%@", subView);
+//    }
+    //[self.topTabBar setNeedsDisplay];
+    [self.topTabBar removeFromSuperview];
+    [self.view addSubview:self.topTabBar]; //解决奇怪的bug
+    //[self.view setNeedsDisplay];
+    
 }
 
 - (NSArray *)titles {
@@ -180,6 +208,11 @@
     return _titles;
 }
 
+- (void)setTitles:(NSArray *)titles {
+    _titles = titles;
+    self.topTabBar.titles = titles;
+}
+
 - (UIColor *)tabBarBKColor {
     if (!_tabBarBKColor) {
         _tabBarBKColor = [UIColor colorWithWhite:0.95 alpha:0.95];
@@ -190,6 +223,30 @@
 - (void)setTabBarBKColor:(UIColor *)tabBarBKColor {
     _tabBarBKColor = tabBarBKColor;
     self.topTabBar.backgroundColor = tabBarBKColor;
+}
+
+- (void)setSelectedLineColor:(UIColor *)selectedLineColor {
+    _selectedLineColor = selectedLineColor;
+    self.topTabBar.selectedLineColor = selectedLineColor;
+}
+
+- (UIColor *)selectedLineColor {
+    if (!_selectedLineColor) {
+        _selectedLineColor = self.topTabBar.selectedLineColor;
+    }
+    return _selectedLineColor;
+}
+
+- (UIColor *)selectedTabItemColor {
+    if (!_selectedTabItemColor) {
+        _selectedTabItemColor = self.topTabBar.selectedTabItemColor;
+    }
+    return _selectedTabItemColor;
+}
+
+- (void)setSelectedTabItemColor:(UIColor *)selectedTabItemColor {
+    _selectedTabItemColor = selectedTabItemColor;
+    self.topTabBar.selectedTabItemColor = selectedTabItemColor;
 }
 
 //- (void)setTitles:(NSArray *)titles {

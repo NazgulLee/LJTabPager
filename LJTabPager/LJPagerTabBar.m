@@ -27,6 +27,9 @@
     CGFloat totalWidth; //所有tabItems的宽度之和
 }
 
+@synthesize selectedLineColor = _selectedLineColor;
+@synthesize selectedTabItemColor = _selectedTabItemColor;
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -37,15 +40,17 @@
 
 - (instancetype)initWithTitles:(NSArray *)titles frame: (CGRect)frame{
     self = [super initWithFrame:frame];
-    if (self != nil && titles.count > 0) {
+    if (self != nil) {
+        NSLog(@"frame: %@", NSStringFromCGRect(frame));
         self.showsHorizontalScrollIndicator = NO;
         _scrollOrientation = SCROLL_ORIENTATION_NONE;
-        //self.bounces = NO;
-        self.titles = titles;
         [self configureViews];
-        [self layoutTabItems];
+        //self.bounces = NO;
+        if (titles.count > 0) {
+            self.titles = titles;
+            [self layoutTabItems];
+        }
     }
-
     return self;
 }
 
@@ -94,7 +99,7 @@
 - (void)highlightTabItemAtIndex:(NSInteger)index {
     
     [((UIButton *)self.tabItems[self.selectedIndex]) setTitleColor:self.unSelectedColor forState:UIControlStateNormal];
-    [((UIButton *)self.tabItems[index]) setTitleColor:self.selectedColor forState:UIControlStateNormal];
+    [((UIButton *)self.tabItems[index]) setTitleColor:self.selectedTabItemColor forState:UIControlStateNormal];
     self.selectedIndex = index;
 }
 
@@ -108,9 +113,10 @@
         [tabItem setTitle:title forState:UIControlStateNormal];
         //tabItem.titleLabel.textColor = [UIColor blackColor]; // 无效
         [tabItem setTitleColor:self.unSelectedColor forState:UIControlStateNormal];
-        [tabItem setTitleColor:self.selectedColor forState:UIControlStateSelected];
+        [tabItem setTitleColor:self.selectedTabItemColor forState:UIControlStateSelected];
         [tabItem sizeToFit];
         [tabItem addTarget:self action:@selector(toogleSelectedTabItem:) forControlEvents:UIControlEventTouchUpInside];
+        //tabItem.backgroundColor = [UIColor redColor];
         [tabItems addObject:tabItem];
         NSLog(@"tabItem.frame: %@", NSStringFromCGRect(tabItem.frame));
         totalWidth += tabItem.bounds.size.width;
@@ -141,6 +147,7 @@
         NSLog(@"spacing: %f\ni: %ld", self.spacing, (long)i);
         self.contentSize = CGSizeMake(self.spacing * self.titles.count + totalWidth, self.bounds.size.height);
     }
+    NSLog(@"contentsize: %@", NSStringFromCGSize(self.contentSize));
     self.shadowView.bounds = CGRectMake(0, 0, self.contentSize.width, self.shadowView.bounds.size.height);
 }
 
@@ -178,15 +185,40 @@
 
 - (void)setTitles:(NSArray *)titles {
     _titles = titles;
+    if (self.tabItems.count > 0) {
+        NSInteger n = self.tabItems.count;
+        for (NSInteger i = 0; i < n; i++) {
+            [self.tabItems[i] removeFromSuperview];
+        }
+    }
     self.tabItems = [self tabItemsWithTitles:titles];
     [self layoutTabItems];
 }
 
-- (UIColor *)selectedColor {
-    if (!_selectedColor) {
-        _selectedColor = [UIColor colorWithRed:235/255.0 green:69/255.0 blue:47/255.0 alpha:1];
+- (UIColor *)selectedLineColor {
+    if (!_selectedLineColor) {
+        _selectedLineColor = [UIColor colorWithRed:235/255.0 green:69/255.0 blue:47/255.0 alpha:1];
     }
-    return _selectedColor;
+    return _selectedLineColor;
+}
+
+- (void)setSelectedLineColor:(UIColor *)selectedLineColor {
+    _selectedLineColor = selectedLineColor;
+    self.selectedLine.backgroundColor = selectedLineColor;
+}
+
+- (UIColor *)selectedTabItemColor {
+    if (!_selectedTabItemColor) {
+        _selectedTabItemColor = [UIColor colorWithRed:235/255.0 green:69/255.0 blue:47/255.0 alpha:1];
+    }
+    return _selectedTabItemColor;
+}
+
+- (void)setSelectedTabItemColor:(UIColor *)selectedTabItemColor {
+    _selectedTabItemColor = selectedTabItemColor;
+    if (self.tabItems.count > 0) {
+        [((UIButton *)self.tabItems[self.selectedIndex]) setTitleColor:self.selectedTabItemColor forState:UIControlStateNormal];
+    }
 }
 
 - (UIColor *)unSelectedColor {
@@ -207,11 +239,11 @@
     return _selectedIndex;
 }
 - (UIView *)selectedLine {
-    if (!_selectedLine && self.tabItems.count) {
+    if (!_selectedLine) {
         //((UIButton *)self.tabItems[0]).bounds.size.width
-        _selectedLine = [[UIView alloc] initWithFrame:CGRectMake(self.spacing / 2, self.bounds.size.height - 2, 0, 2)];
+        _selectedLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 2, 0, 2)];
         NSLog(@"selectedline center: %@", NSStringFromCGPoint(_selectedLine.center));
-        _selectedLine.backgroundColor = self.selectedColor;
+        _selectedLine.backgroundColor = self.selectedLineColor;
     }
     return _selectedLine;
 }

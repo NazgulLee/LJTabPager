@@ -25,7 +25,8 @@ typedef NS_ENUM(NSInteger, SCROLL_ORIENTATION) {
 
 @property (nonatomic) NSArray *titles;
 @property (nonatomic) NSInteger selectedIndex;
-@property (nonatomic) UIColor *selectedColor;
+@property (nonatomic) UIColor *selectedLineColor;
+@property (nonatomic) UIColor *selectedTabItemColor;
 @property (nonatomic) UIColor *unSelectedColor;
 @property (nonatomic) CGFloat pagerContentOffsetX;
 @property (nonatomic) SCROLL_ORIENTATION scrollOrientation;

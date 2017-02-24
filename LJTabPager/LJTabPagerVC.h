@@ -18,7 +18,8 @@
 @interface LJTabPagerVC : UIViewController
 
 @property (nonatomic) NSArray *viewControllers;
-@property (nonatomic) UIColor *tintColor;
+@property (nonatomic) UIColor *selectedLineColor;
+@property (nonatomic) UIColor *selectedTabItemColor;
 @property (nonatomic) UIColor *tabBarBKColor;
 
 @end
