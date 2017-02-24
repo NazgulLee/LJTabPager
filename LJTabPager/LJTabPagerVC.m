@@ -31,6 +31,7 @@
 
 @synthesize topTabBar = _topTabBar;
 @synthesize titles = _titles;
+@synthesize tabBarBKColor = _tabBarBKColor;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -134,6 +135,7 @@
 - (LJPagerTabBar *)topTabBar {
     if (!_topTabBar) {
         _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 64, self.view.bounds.size.width, PAGERTABBAR_HEIGHT)];
+        _topTabBar.backgroundColor = self.tabBarBKColor;
         _topTabBar.pagerTabBarDelegate = self;
     }
     return _topTabBar;
@@ -176,6 +178,18 @@
         _titles = [NSArray arrayWithArray:titles];
     }
     return _titles;
+}
+
+- (UIColor *)tabBarBKColor {
+    if (!_tabBarBKColor) {
+        _tabBarBKColor = [UIColor colorWithWhite:0.9 alpha:0.2];
+    }
+    return _tabBarBKColor;
+}
+
+- (void)setTabBarBKColor:(UIColor *)tabBarBKColor {
+    _tabBarBKColor = tabBarBKColor;
+    self.topTabBar.backgroundColor = tabBarBKColor;
 }
 
 //- (void)setTitles:(NSArray *)titles {

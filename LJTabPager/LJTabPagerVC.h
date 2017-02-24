@@ -19,5 +19,6 @@
 
 @property (nonatomic) NSArray *viewControllers;
 @property (nonatomic) UIColor *tintColor;
+@property (nonatomic) UIColor *tabBarBKColor;
 
 @end
