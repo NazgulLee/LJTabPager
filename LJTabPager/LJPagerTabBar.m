@@ -50,7 +50,6 @@
 }
 
 - (void)configureViews {
-    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.2];
 
     [self addSubview:self.shadowView];
     

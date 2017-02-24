@@ -182,7 +182,7 @@
 
 - (UIColor *)tabBarBKColor {
     if (!_tabBarBKColor) {
-        _tabBarBKColor = [UIColor colorWithWhite:0.9 alpha:0.2];
+        _tabBarBKColor = [UIColor colorWithWhite:0.95 alpha:0.95];
     }
     return _tabBarBKColor;
 }
