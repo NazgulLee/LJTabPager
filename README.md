@@ -4,8 +4,9 @@
 
 ![image2](LJTabPager.gif)
 
-［动态图显示不了请点这里］（http://oluwxq3sq.bkt.clouddn.com/LJTabPager.gif）
-［静态图显示不了请点这里］（http://oluwxq3sq.bkt.clouddn.com/LJTabPager.PNG）
+[动态图显示不了请点这里](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.gif)
+
+[静态图显示不了请点这里](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.PNG)
 
 要使用也很简单，只需要
 
