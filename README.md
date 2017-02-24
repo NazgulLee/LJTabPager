@@ -41,5 +41,4 @@
  若想使viewController在被选中或滑到了它时收到通知，只需服从`LJTabPagerVCDelegate`协议，然后实现`- (void)hasBeenSelectedAndShown`方法。
  
  默认pagerTabBar的背景色是半透明的，你也可以通过`LJTabPagerVC`的 `tabBarBKColor`属性自定义它的背景色。
-    TableViewController *controller8 = [[TableViewController alloc] init];
-    TableViewController *controller8 = [[TableViewController alloc] init];
+
