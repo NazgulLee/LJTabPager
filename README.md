@@ -1,5 +1,7 @@
 # LJTabPager
 高仿iOS版网易云音乐页面左右滑动切换效果，如图所示：
+![](./LJTabPager.png)
+
 ![](./LJTabPager.gif)
 要使用也很简单，只需要
 
