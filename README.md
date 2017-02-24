@@ -1,8 +1,9 @@
 # LJTabPager
 自己写的一个开源控件，高仿iOS版网易云音乐页面左右滑动切换效果，如图所示：
-![image1](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.PNG)
 
-![image2](LJTabPager.gif)
+![gif](LJTabPager.gif)
+
+![image](LJTabPager.PNG)
 
 [动态图显示不了请点这里](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.gif)
 
