@@ -191,7 +191,7 @@
 //    }
     //[self.topTabBar setNeedsDisplay];
     [self.topTabBar removeFromSuperview];
-    [self.view addSubview:self.topTabBar]; //解决奇怪的bug
+    [self.view addSubview:self.topTabBar]; //解决先设置selectedLine颜色，再设置viewControllers产生的奇怪的bug
     //[self.view setNeedsDisplay];
     
 }

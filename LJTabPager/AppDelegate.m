@@ -37,10 +37,10 @@
     controller7.title = @"专辑";
     TableViewController *controller8 = [[TableViewController alloc] init];
     controller8.title = @"单曲";
-    pagerVC.selectedTabItemColor = [UIColor yellowColor];
-    pagerVC.selectedLineColor = [UIColor greenColor];
+
     pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
-    
+//    pagerVC.selectedTabItemColor = [UIColor yellowColor];
+//    pagerVC.selectedLineColor = [UIColor greenColor];
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];
     rootVC.edgesForExtendedLayout = UIRectEdgeNone;
     self.window.rootViewController = rootVC;
