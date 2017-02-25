@@ -286,7 +286,7 @@
     CGFloat rightTabItemX = ((UIButton *)self.tabItems[position + 1]).center.x; //selectedLine右边的tabItem的位置
     CGFloat scale = (pagerContentOffsetX - position * self.bounds.size.width) / self.bounds.size.width;
     NSLog(@"scale: %f", scale);
-    NSLog(@"position: %ld", position);
+    //NSLog(@"position: %ld", position);
     CGFloat x = leftTabItemX + scale * (rightTabItemX - leftTabItemX); //计算selectedLine的位置
     self.selectedLine.center = CGPointMake(x, self.selectedLine.center.y);
     CGFloat leftTabItemWidth = ((UIButton *)self.tabItems[position]).bounds.size.width;
@@ -294,16 +294,20 @@
     CGFloat width = leftTabItemWidth + scale * (rightTabItemWidth - leftTabItemWidth); //计算selectedLine的宽度
     self.selectedLine.bounds = CGRectMake(0, 0, width, self.selectedLine.bounds.size.height);
     
-    if (0 < scale && scale < 1) {
+    if (0.1 < scale && scale < 0.9) {
+        CGFloat newScale = scale * 1 / (0.9 - 0.1) - 0.1 / (0.9 - 0.1);//平滑scale的变化
+        NSLog(@"newScale: %f", newScale);
         if (self.scrollOrientation == SCROLL_ORIENTATION_RIGHT) {
             if (self.tabBarRightDestX > self.contentOffset.x) {
-                self.contentOffset = CGPointMake(self.tabBarInitialX + scale * (self.tabBarRightDestX - self.tabBarInitialX), 0);
+                self.contentOffset = CGPointMake(self.tabBarInitialX + newScale * (self.tabBarRightDestX - self.tabBarInitialX), 0);
             }
         } else if (self.scrollOrientation == SCROLL_ORIENTATION_LEFT) {
             if (self.tabBarLeftDestX < self.contentOffset.x) {
-                self.contentOffset = CGPointMake(self.tabBarInitialX - (1 - scale) * (self.tabBarInitialX - self.tabBarLeftDestX), 0);
+                self.contentOffset = CGPointMake(self.tabBarInitialX - (1 - newScale) * (self.tabBarInitialX - self.tabBarLeftDestX), 0);
             }
         }
+    } else { //防止scale突变造成的tabBar闪烁
+        self.scrollOrientation = SCROLL_ORIENTATION_NONE;
     }
 
 
