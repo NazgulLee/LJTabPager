@@ -153,7 +153,7 @@
         _scrollView.delaysContentTouches = YES;
         //_scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * self.viewControllers.count, self.view.bounds.size.height);
         _scrollView.frame = CGRectMake(0, 64, self.view.bounds.size.width, self.view.bounds.size.height);
-        _scrollView.backgroundColor = [UIColor yellowColor];
+        //_scrollView.backgroundColor = [UIColor yellowColor];
     }
     return _scrollView;
 }
