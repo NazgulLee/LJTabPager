@@ -3,6 +3,7 @@
 
 ![gif](LJTabPager.gif)
 
+![](实际应用.PNG)
 
 [动态图显示不了请点这里](http://oluwxq3sq.bkt.clouddn.com/LJTabPager.gif)
 
