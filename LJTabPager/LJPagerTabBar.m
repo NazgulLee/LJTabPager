@@ -41,7 +41,7 @@
 - (instancetype)initWithTitles:(NSArray *)titles frame: (CGRect)frame{
     self = [super initWithFrame:frame];
     if (self != nil) {
-        NSLog(@"frame: %@", NSStringFromCGRect(frame));
+        //NSLog(@"frame: %@", NSStringFromCGRect(frame));
         self.showsHorizontalScrollIndicator = NO;
         _scrollOrientation = SCROLL_ORIENTATION_NONE;
         [self configureViews];
@@ -118,7 +118,7 @@
         [tabItem addTarget:self action:@selector(toogleSelectedTabItem:) forControlEvents:UIControlEventTouchUpInside];
         //tabItem.backgroundColor = [UIColor redColor];
         [tabItems addObject:tabItem];
-        NSLog(@"tabItem.frame: %@", NSStringFromCGRect(tabItem.frame));
+        //NSLog(@"tabItem.frame: %@", NSStringFromCGRect(tabItem.frame));
         totalWidth += tabItem.bounds.size.width;
     }
         return [NSArray arrayWithArray:tabItems];
@@ -126,7 +126,7 @@
 
 - (void)caculateSpacing {
     self.spacing = (self.bounds.size.width - totalWidth) / self.titles.count;
-    NSLog(@"spacing: %f", self.spacing);
+    //NSLog(@"spacing: %f", self.spacing);
     if (self.titles.count == 1 || self.spacing >= MIN_SPACING) {
         self.contentSize = self.bounds.size;
        
@@ -134,7 +134,7 @@
         NSInteger i;
         CGFloat visibleItemsWidth = totalWidth;
         for (i = self.tabItems.count - 1; i > 0; i--) {
-            NSLog(@"i: %ld", i);
+            //NSLog(@"i: %ld", i);
             visibleItemsWidth -= ((UIButton *)self.tabItems[i]).bounds.size.width / 2; //让最右边的tabItem只显示一半来提示用户还有更多
             self.spacing = (self.bounds.size.width - visibleItemsWidth) * 2 / (2 * i + 1);
             if (self.spacing >= MIN_SPACING) {
@@ -144,10 +144,10 @@
                 
             }
         }
-        NSLog(@"spacing: %f\ni: %ld", self.spacing, (long)i);
+        //NSLog(@"spacing: %f\ni: %ld", self.spacing, (long)i);
         self.contentSize = CGSizeMake(self.spacing * self.titles.count + totalWidth, self.bounds.size.height);
     }
-    NSLog(@"contentsize: %@", NSStringFromCGSize(self.contentSize));
+    //NSLog(@"contentsize: %@", NSStringFromCGSize(self.contentSize));
     self.shadowView.bounds = CGRectMake(0, 0, self.contentSize.width, self.shadowView.bounds.size.height);
 }
 
@@ -155,16 +155,17 @@
     self.tabBarInitialX = self.contentOffset.x;
     self.scrollOrientation = SCROLL_ORIENTATION_NONE;
     if (self.selectedIndex < self.tabItems.count - 2) {
-        
+        // 当前选中tabItem的下下个tabItem的右边界加tabItem间隔的一半，再减去屏幕宽度，作为上面的scrollView的至少要有的contentOffset
         self.tabBarRightDestX = ((UIButton *)self.tabItems[self.selectedIndex + 2]).frame.origin.x + ((UIButton *)self.tabItems[self.selectedIndex + 2]).frame.size.width + self.spacing / 2 - self.bounds.size.width;
     }
     if (1 < self.selectedIndex) {
+        //上面的scrollView的至多应有的contentOffset
         self.tabBarLeftDestX = ((UIButton *)self.tabItems[self.selectedIndex - 2]).frame.origin.x - self.spacing / 2;
     }
     
-    NSLog(@"tabBarInitialX: %f", self.tabBarInitialX);
-    NSLog(@"tabBarRightDestX: %f", self.tabBarRightDestX);
-    NSLog(@"tabBarLeftDestX: %f", self.tabBarLeftDestX);
+//    NSLog(@"tabBarInitialX: %f", self.tabBarInitialX);
+//    NSLog(@"tabBarRightDestX: %f", self.tabBarRightDestX);
+//    NSLog(@"tabBarLeftDestX: %f", self.tabBarLeftDestX);
 
 }
 
@@ -242,7 +243,7 @@
     if (!_selectedLine) {
         //((UIButton *)self.tabItems[0]).bounds.size.width
         _selectedLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 2, 0, 2)];
-        NSLog(@"selectedline center: %@", NSStringFromCGPoint(_selectedLine.center));
+        //NSLog(@"selectedline center: %@", NSStringFromCGPoint(_selectedLine.center));
         _selectedLine.backgroundColor = self.selectedLineColor;
     }
     return _selectedLine;
@@ -268,7 +269,7 @@
     }
     return _shadowView;
 }
-
+// pagerContentOffset是下面的scrollView的contentOffset
 - (void)setPagerContentOffsetX:(CGFloat)pagerContentOffsetX {
     _pagerContentOffsetX = pagerContentOffsetX;
     NSInteger index = (pagerContentOffsetX + 0.5 * self.bounds.size.width) / self.bounds.size.width; //滑动超过一半就切换高亮的tabItem
@@ -276,16 +277,16 @@
         [self highlightTabItemAtIndex:index];
     }
     
-    NSInteger position = pagerContentOffsetX / self.bounds.size.width; // selectedLine左边的tabItem的index
+    NSInteger position = pagerContentOffsetX / self.bounds.size.width; //不动或者向右滑时为当前选中的tabItem的index，往左滑时为当前选中的tabItem的左边的index
     if (position == self.tabItems.count - 1) { //防止后面position＋1溢出
-        self.selectedLine.center = CGPointMake(((UIButton *)self.tabItems[position]).center.x, self.selectedLine.center.y);
-        self.selectedLine.bounds = CGRectMake(0, 0, ((UIButton *)self.tabItems[position]).bounds.size.width, self.selectedLine.bounds.size.height);
+//        self.selectedLine.center = CGPointMake(((UIButton *)self.tabItems[position]).center.x, self.selectedLine.center.y);
+//        self.selectedLine.bounds = CGRectMake(0, 0, ((UIButton *)self.tabItems[position]).bounds.size.width, self.selectedLine.bounds.size.height);
         return;
     }
-    CGFloat leftTabItemX = ((UIButton *)self.tabItems[position]).center.x; //selectedLine左边的tabItem的位置
-    CGFloat rightTabItemX = ((UIButton *)self.tabItems[position + 1]).center.x; //selectedLine右边的tabItem的位置
+    CGFloat leftTabItemX = ((UIButton *)self.tabItems[position]).center.x; //滑动过程中selectedLine左边的tabItem的位置
+    CGFloat rightTabItemX = ((UIButton *)self.tabItems[position + 1]).center.x; //滑动过程中selectedLine右边的tabItem的位置
     CGFloat scale = (pagerContentOffsetX - position * self.bounds.size.width) / self.bounds.size.width;
-    NSLog(@"scale: %f", scale);
+    //NSLog(@"scale: %f", scale);
     //NSLog(@"position: %ld", position);
     CGFloat x = leftTabItemX + scale * (rightTabItemX - leftTabItemX); //计算selectedLine的位置
     self.selectedLine.center = CGPointMake(x, self.selectedLine.center.y);
@@ -296,7 +297,7 @@
     
     if (0.1 < scale && scale < 0.9) {
         CGFloat newScale = scale * 1 / (0.9 - 0.1) - 0.1 / (0.9 - 0.1);//平滑scale的变化
-        NSLog(@"newScale: %f", newScale);
+        //NSLog(@"newScale: %f", newScale);
         if (self.scrollOrientation == SCROLL_ORIENTATION_RIGHT) {
             if (self.tabBarRightDestX > self.contentOffset.x) {
                 self.contentOffset = CGPointMake(self.tabBarInitialX + newScale * (self.tabBarRightDestX - self.tabBarInitialX), 0);

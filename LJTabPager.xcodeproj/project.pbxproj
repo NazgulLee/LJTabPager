@@ -7,17 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		307F44521E8FC17100ECF3DD /* LJPagerTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */; };
+		307F44531E8FC17100ECF3DD /* LJTabPagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F44511E8FC17100ECF3DD /* LJTabPagerVC.m */; };
 		30E713C11E5D9A0300099E81 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713C01E5D9A0300099E81 /* main.m */; };
 		30E713C41E5D9A0300099E81 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713C31E5D9A0300099E81 /* AppDelegate.m */; };
 		30E713CA1E5D9A0300099E81 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 30E713C81E5D9A0300099E81 /* Main.storyboard */; };
 		30E713CC1E5D9A0300099E81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30E713CB1E5D9A0300099E81 /* Assets.xcassets */; };
 		30E713CF1E5D9A0300099E81 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 30E713CD1E5D9A0300099E81 /* LaunchScreen.storyboard */; };
-		30E713D81E5DA42700099E81 /* LJTabPagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713D71E5DA42700099E81 /* LJTabPagerVC.m */; };
-		30E713DB1E5DA5F400099E81 /* LJPagerTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713DA1E5DA5F400099E81 /* LJPagerTabBar.m */; };
 		30E713E11E5DD48600099E81 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713E01E5DD48600099E81 /* TableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		307F444E1E8FC17100ECF3DD /* LJPagerTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJPagerTabBar.h; sourceTree = "<group>"; };
+		307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJPagerTabBar.m; sourceTree = "<group>"; };
+		307F44501E8FC17100ECF3DD /* LJTabPagerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJTabPagerVC.h; sourceTree = "<group>"; };
+		307F44511E8FC17100ECF3DD /* LJTabPagerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJTabPagerVC.m; sourceTree = "<group>"; };
 		30E713BC1E5D9A0300099E81 /* LJTabPager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LJTabPager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30E713C01E5D9A0300099E81 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		30E713C21E5D9A0300099E81 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -26,10 +30,6 @@
 		30E713CB1E5D9A0300099E81 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30E713CE1E5D9A0300099E81 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		30E713D01E5D9A0300099E81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		30E713D61E5DA42700099E81 /* LJTabPagerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJTabPagerVC.h; sourceTree = "<group>"; };
-		30E713D71E5DA42700099E81 /* LJTabPagerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJTabPagerVC.m; sourceTree = "<group>"; };
-		30E713D91E5DA5F400099E81 /* LJPagerTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJPagerTabBar.h; sourceTree = "<group>"; };
-		30E713DA1E5DA5F400099E81 /* LJPagerTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJPagerTabBar.m; sourceTree = "<group>"; };
 		30E713DF1E5DD48600099E81 /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
 		30E713E01E5DD48600099E81 /* TableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,10 +89,10 @@
 		30E713E21E5ED72100099E81 /* LJTabPager */ = {
 			isa = PBXGroup;
 			children = (
-				30E713D61E5DA42700099E81 /* LJTabPagerVC.h */,
-				30E713D71E5DA42700099E81 /* LJTabPagerVC.m */,
-				30E713D91E5DA5F400099E81 /* LJPagerTabBar.h */,
-				30E713DA1E5DA5F400099E81 /* LJPagerTabBar.m */,
+				307F444E1E8FC17100ECF3DD /* LJPagerTabBar.h */,
+				307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */,
+				307F44501E8FC17100ECF3DD /* LJTabPagerVC.h */,
+				307F44511E8FC17100ECF3DD /* LJTabPagerVC.m */,
 			);
 			name = LJTabPager;
 			sourceTree = "<group>";
@@ -170,10 +170,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				30E713C41E5D9A0300099E81 /* AppDelegate.m in Sources */,
-				30E713D81E5DA42700099E81 /* LJTabPagerVC.m in Sources */,
 				30E713C11E5D9A0300099E81 /* main.m in Sources */,
+				307F44531E8FC17100ECF3DD /* LJTabPagerVC.m in Sources */,
 				30E713E11E5DD48600099E81 /* TableViewController.m in Sources */,
-				30E713DB1E5DA5F400099E81 /* LJPagerTabBar.m in Sources */,
+				307F44521E8FC17100ECF3DD /* LJPagerTabBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +330,7 @@
 				30E713D51E5D9A0300099E81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

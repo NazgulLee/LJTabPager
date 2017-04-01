@@ -21,5 +21,8 @@
 @property (nonatomic) UIColor *selectedLineColor;
 @property (nonatomic) UIColor *selectedTabItemColor;
 @property (nonatomic) UIColor *tabBarBKColor;
+@property (nonatomic) NSInteger selectedIndex;
+
++ (CGFloat)pagerTabBarHeight;
 
 @end
