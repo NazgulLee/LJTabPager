@@ -24,9 +24,9 @@
 
 @implementation LJTabPagerVC
 {
-    BOOL isScrollCausedByDragging;//下方的scrollView滑动是因为用户直接滑动还是因为用户点选topTabBar的tabItem导致的
-    NSInteger selectedControllerIndex;
-    CGFloat initialContentOffsetX;//一次滑动开始时scrollView的contentOffset
+    BOOL _isScrollCausedByDragging; //!< 标识下方的scrollView滑动是因为用户直接滑动还是因为用户点选topTabBar的tabItem导致的
+    NSInteger _selectedControllerIndex;
+    CGFloat _initialContentOffsetX; //!< 一次滑动开始时scrollView的contentOffset
 }
 
 @synthesize topTabBar = _topTabBar;
@@ -38,9 +38,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    isScrollCausedByDragging = YES;
-    selectedControllerIndex = self.topTabBar.selectedIndex;
-    
+    _isScrollCausedByDragging = YES;
+    _selectedControllerIndex = self.topTabBar.selectedIndex;
     
     self.automaticallyAdjustsScrollViewInsets = NO; //告诉viewController不要自动调整scrollview的contentInset
     
@@ -48,26 +47,9 @@
     [self.view addSubview:self.topTabBar];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 - (void)callDelegateAtIndex:(NSInteger)index {
     if ([self.viewControllers[index] conformsToProtocol:@protocol(LJTabPagerVCDelegate)]) {
-        //NSLog(@"conformsToProtocol");
         if ([self.viewControllers[index] respondsToSelector:@selector(hasBeenSelectedAndShown)]) {
-            //NSLog(@"respondsToSelector");
             [self.viewControllers[index] hasBeenSelectedAndShown];
         }
     }
@@ -83,76 +65,45 @@
 }
 
 #pragma UIScrollViewDelegate
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    _isScrollCausedByDragging = YES;
+    _initialContentOffsetX = scrollView.contentOffset.x;
+    self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_NONE; // 重置scrollOrientation
+    [self.topTabBar recordInitialAndDestX];
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-
-    if (isScrollCausedByDragging) {
+    if (_isScrollCausedByDragging) {
         self.topTabBar.pagerContentOffsetX = scrollView.contentOffset.x;
     }
-    if (scrollView.contentOffset.x - initialContentOffsetX > 0) {
+    if (scrollView.contentOffset.x - _initialContentOffsetX > 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
-    } else if (scrollView.contentOffset.x - initialContentOffsetX < 0) {
+    } else if (scrollView.contentOffset.x - _initialContentOffsetX < 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_LEFT;
     } else {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_NONE;
     }
 }
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    isScrollCausedByDragging = YES;
-    initialContentOffsetX = scrollView.contentOffset.x;
-    [self.topTabBar recordInitialAndDestX];
-    
-}
-
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    //NSLog(@"%s", __FUNCTION__);
-    if (selectedControllerIndex != self.topTabBar.selectedIndex) { // 由用户左右滑动导致的viewController切换
-        selectedControllerIndex = self.topTabBar.selectedIndex;
+    if (_selectedControllerIndex != self.topTabBar.selectedIndex) { // 由用户左右滑动导致的viewController切换
+        _selectedControllerIndex = self.topTabBar.selectedIndex;
         [self.topTabBar checkSelectedTabItemVisible]; 
-        [self callDelegateAtIndex:selectedControllerIndex];
+        [self callDelegateAtIndex:_selectedControllerIndex];
     }
 }
 
-//- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-//    NSLog(@"%s", __FUNCTION__);
-//}
-
 #pragma LJPagerTabBarDelegate
-
 - (void)showViewAtIndex:(NSInteger)index {
-    isScrollCausedByDragging = NO;
+    _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
     [self.scrollView setContentOffset:CGPointMake(self.view.bounds.size.width * index, 0) animated:NO];
     [self callDelegateAtIndex:index]; // 用户滑动到其他viewController时调用，或者用户直接点选tabItem来切换viewController时调用（点选当前选中的tabItem也会调用）
 }
 
 #pragma mark - Accessor Methods
-
-- (LJPagerTabBar *)topTabBar {
-    if (!_topTabBar) {
-        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 0, self.view.bounds.size.width, PAGERTABBAR_HEIGHT)]; //这里由于使用了self.view，若这时self.view还没有load，会先执行[self loadView]和[self viewDidLoad]
-        _topTabBar.backgroundColor = self.tabBarBKColor;
-        _topTabBar.pagerTabBarDelegate = self;
-    }
-    return _topTabBar;
-}
-- (UIScrollView *)scrollView {
-    if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] init];
-        _scrollView.tag = CONTENT_SCROLLVIEW;
-        _scrollView.delegate = self;
-        _scrollView.pagingEnabled = YES;
-        _scrollView.bounces = NO;
-        _scrollView.directionalLockEnabled = YES;
-        _scrollView.delaysContentTouches = YES;
-        _scrollView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-    }
-    return _scrollView;
-}
-
 - (void)setViewControllers:(NSArray *)viewControllers {
-    if (_viewControllers.count > 0) {
+    if (_viewControllers.count > 0) { //移除旧的_viewControllers
         for (int i = 0; i < _viewControllers.count; i++) {
             UIViewController *controller = _viewControllers[i];
             [controller willMoveToParentViewController:nil];
@@ -169,15 +120,35 @@
         controller.view.frame = CGRectMake(self.scrollView.bounds.size.width * i, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self.scrollView addSubview:controller.view];
         [controller didMoveToParentViewController:self];
-        
     }
     
     [self updateTitles];
     
     [self.topTabBar removeFromSuperview];
     [self.view addSubview:self.topTabBar]; //解决先设置selectedLine颜色，再设置viewControllers产生的奇怪的bug
-    //[self.view setNeedsDisplay];
-    
+}
+
+- (LJPagerTabBar *)topTabBar {
+    if (!_topTabBar) {
+        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 0, self.view.bounds.size.width, PAGERTABBAR_HEIGHT)]; //这里由于使用了self.view，若这时self.view还没有load，会先执行[self loadView]和[self viewDidLoad]
+        _topTabBar.backgroundColor = self.tabBarBKColor;
+        _topTabBar.pagerTabBarDelegate = self;
+    }
+    return _topTabBar;
+}
+
+- (UIScrollView *)scrollView {
+    if (!_scrollView) {
+        _scrollView = [[UIScrollView alloc] init];
+        _scrollView.tag = CONTENT_SCROLLVIEW;
+        _scrollView.delegate = self;
+        _scrollView.pagingEnabled = YES;
+        _scrollView.bounces = NO;
+        _scrollView.directionalLockEnabled = YES;
+        _scrollView.delaysContentTouches = YES;
+        _scrollView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    }
+    return _scrollView;
 }
 
 - (NSArray *)titles {
@@ -209,16 +180,16 @@
     self.topTabBar.backgroundColor = tabBarBKColor;
 }
 
-- (void)setSelectedLineColor:(UIColor *)selectedLineColor {
-    _selectedLineColor = selectedLineColor;
-    self.topTabBar.selectedLineColor = selectedLineColor;
-}
-
 - (UIColor *)selectedLineColor {
     if (!_selectedLineColor) {
         _selectedLineColor = self.topTabBar.selectedLineColor;
     }
     return _selectedLineColor;
+}
+
+- (void)setSelectedLineColor:(UIColor *)selectedLineColor {
+    _selectedLineColor = selectedLineColor;
+    self.topTabBar.selectedLineColor = selectedLineColor;
 }
 
 - (UIColor *)selectedTabItemColor {
@@ -232,11 +203,6 @@
     _selectedTabItemColor = selectedTabItemColor;
     self.topTabBar.selectedTabItemColor = selectedTabItemColor;
 }
-
-//- (void)setTitles:(NSArray *)titles {
-//    _titles = titles;
-//    self.topTabBar.titles = titles;
-//}
 
 + (CGFloat)pagerTabBarHeight {
     return PAGERTABBAR_HEIGHT;
