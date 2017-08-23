@@ -8,6 +8,8 @@
 
 #define MIN_SPACING 40.0
 
+#define ANIMATE_DURATION 0.25
+
 #import "LJPagerTabBar.h"
 
 @interface LJPagerTabBar ()
@@ -69,12 +71,31 @@
 }
 
 - (void)selectTabItemAtIndex:(NSInteger)index animated:(BOOL)animated {
+    NSInteger direction = 0;
+    NSInteger destIndex = -1;
+    CGFloat destOffsetx = self.contentOffset.x;
+    if (index != self.selectedIndex) {
+        destIndex = index < self.selectedIndex ? index-1 : index+1;
+        direction = index < self.selectedIndex ? -1 : 1;
+    }
+    if (destIndex >= 0 && destIndex <self.tabItems.count) {
+        UIButton *destTabItem = ((UIButton *)self.tabItems[destIndex]);
+        if (direction == -1) {
+            destOffsetx = destTabItem.frame.origin.x - self.spacing/2;
+        } else if (direction == 1) {
+            destOffsetx = destTabItem.frame.origin.x + destTabItem.frame.size.width + self.spacing / 2 - self.bounds.size.width;
+        }
+    }
+    if (destOffsetx < 0)
+        destOffsetx = 0;
+    if (destOffsetx > self.contentSize.width-self.bounds.size.width)
+        destOffsetx = self.contentSize.width-self.bounds.size.width;
     [self highlightTabItemAtIndex:index];
     [self.pagerTabBarDelegate showViewAtIndex:index];
     CGFloat endLineWidth = ((UIButton *)self.tabItems[index]).bounds.size.width;
     CGFloat endCenterX = ((UIButton *)self.tabItems[index]).center.x;
     if (animated) {
-        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [UIView animateWithDuration:ANIMATE_DURATION delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             self.selectedLine.center = CGPointMake(endCenterX, self.selectedLine.center.y);
             self.selectedLine.bounds = CGRectMake(0, 0, endLineWidth, self.selectedLine.bounds.size.height);
         } completion:NULL];
@@ -82,6 +103,8 @@
         self.selectedLine.center = CGPointMake(endCenterX, self.selectedLine.center.y);
         self.selectedLine.bounds = CGRectMake(0, 0, endLineWidth, self.selectedLine.bounds.size.height);
     }
+    [self animateContentOffset:CGPointMake(destOffsetx, 0) withDuration:ANIMATE_DURATION];
+    //[self setContentOffset:CGPointMake(destOffsetx, 0) animated:YES];
 }
 
 - (void)highlightTabItemAtIndex:(NSInteger)index {
@@ -150,15 +173,23 @@
         CGFloat expectedContentOffset = selectedTabItemRightX - self.bounds.size.width / 2;
         CGFloat maxContentOffset = self.contentSize.width - self.bounds.size.width;
         CGFloat result = expectedContentOffset > maxContentOffset ? maxContentOffset : expectedContentOffset;
-        [self setContentOffset:CGPointMake(result, 0) animated:YES];
+        //[self setContentOffset:CGPointMake(result, 0) animated:YES];
+        [self animateContentOffset:CGPointMake(result, 0) withDuration:ANIMATE_DURATION];
     }
     // 若当前选中的tabItem的左边界不在屏幕中
     if (selectedTabItemLeftX < self.contentOffset.x) {
         CGFloat expectedContentOffset = selectedTabItemLeftX - self.bounds.size.width / 2;
         CGFloat minContentOffset = 0;
         CGFloat result = expectedContentOffset < minContentOffset ? minContentOffset : expectedContentOffset;
-        [self setContentOffset:CGPointMake(result, 0) animated:YES];
+        //[self setContentOffset:CGPointMake(result, 0) animated:YES];
+        [self animateContentOffset:CGPointMake(result, 0) withDuration:ANIMATE_DURATION];
     }
+}
+
+- (void)animateContentOffset:(CGPoint)offset withDuration:(NSTimeInterval)duration {
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        self.contentOffset = offset;
+    } completion:NULL];
 }
 
 #pragma mark - Accessor Methods

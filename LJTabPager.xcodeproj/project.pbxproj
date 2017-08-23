@@ -294,7 +294,7 @@
 				DEVELOPMENT_TEAM = BM66D6ANYU;
 				INFOPLIST_FILE = LJTabPager/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.moutouren.double.LJTabPager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moutouren.ljtabpager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -306,7 +306,7 @@
 				DEVELOPMENT_TEAM = BM66D6ANYU;
 				INFOPLIST_FILE = LJTabPager/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.moutouren.double.LJTabPager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.moutouren.ljtabpager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
