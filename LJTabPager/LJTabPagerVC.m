@@ -14,19 +14,22 @@
 
 #define PAGERTABBAR_HEIGHT 40
 
+#define MAX_PAGERVC_COUNT_IN_SCROLLVIEW 3
+
 @interface LJTabPagerVC () <UIScrollViewDelegate, LJPagerTabBarDelegate>
 
 @property (nonatomic) NSArray *titles;
 @property (nonatomic) LJPagerTabBar *topTabBar;
 @property (nonatomic) UIScrollView *scrollView;
+@property (nonatomic) NSMutableArray *presentingViews;
 
 @end
 
 @implementation LJTabPagerVC
 {
     BOOL _isScrollCausedByDragging; //!< 标识下方的scrollView滑动是因为用户直接滑动还是因为用户点选topTabBar的tabItem导致的
-    NSInteger _selectedControllerIndex;
     CGFloat _initialContentOffsetX; //!< 一次滑动开始时scrollView的contentOffset
+    NSInteger _initialSelectedIndex;
 }
 
 @synthesize topTabBar = _topTabBar;
@@ -40,7 +43,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
     _isScrollCausedByDragging = YES;
-    _selectedControllerIndex = self.topTabBar.selectedIndex;
+    _initialSelectedIndex = self.topTabBar.selectedIndex;
     
     self.automaticallyAdjustsScrollViewInsets = NO; //告诉viewController不要自动调整scrollview的contentInset
     
@@ -69,13 +72,15 @@
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     _isScrollCausedByDragging = YES;
     _initialContentOffsetX = scrollView.contentOffset.x;
+    _initialSelectedIndex = self.selectedIndex;
     self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_NONE; // 重置scrollOrientation
     [self.topTabBar recordInitialAndDestX];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    NSLog(@"****%f", _initialSelectedIndex * self.view.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX);
     if (_isScrollCausedByDragging) {
-        self.topTabBar.pagerContentOffsetX = scrollView.contentOffset.x;
+        self.topTabBar.pagerContentOffsetX = _initialSelectedIndex * self.view.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX;
     }
     if (scrollView.contentOffset.x - _initialContentOffsetX > 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
@@ -87,10 +92,9 @@
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (_selectedControllerIndex != self.topTabBar.selectedIndex) { // 由用户左右滑动导致的viewController切换
-        _selectedControllerIndex = self.topTabBar.selectedIndex;
-        [self.topTabBar checkSelectedTabItemVisible]; 
-        [self callDelegateAtIndex:_selectedControllerIndex];
+    if (_initialSelectedIndex != self.topTabBar.selectedIndex) { // viewController切换了
+        _initialSelectedIndex = self.topTabBar.selectedIndex;
+        [self showViewAtIndex:self.selectedIndex];
     }
 }
 
@@ -98,8 +102,55 @@
 - (void)showViewAtIndex:(NSInteger)index {
     _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
-    [self.scrollView setContentOffset:CGPointMake(self.view.bounds.size.width * index, 0) animated:NO];
+    UIViewController *controller = self.viewControllers[index];
+    if (index == self.viewControllers.count-1 || index == 0) {
+        NSObject *obj = index == 0 ? self.presentingViews[0] : self.presentingViews[MAX_PAGERVC_COUNT_IN_SCROLLVIEW-1];
+        if ([obj isKindOfClass:[UIView class]]) {
+            ((UIView *)obj).hidden = true;
+        }
+        CGFloat x = index == 0 ? 0 : (MAX_PAGERVC_COUNT_IN_SCROLLVIEW-1)*self.view.bounds.size.width;
+        if (controller.parentViewController == nil) {
+            [self addChildViewController:controller];
+            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+            [self.scrollView addSubview:controller.view];
+            [controller didMoveToParentViewController:self];
+        } else {
+            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+            controller.view.hidden = false;
+        }
+        self.presentingViews[(index == 0 ? 0 : MAX_PAGERVC_COUNT_IN_SCROLLVIEW-1)] = controller.view;
+        [self.scrollView setContentOffset:CGPointMake(x, 0) animated:NO];
+    } else{
+        for (NSInteger i = 0; i < MAX_PAGERVC_COUNT_IN_SCROLLVIEW; i++) {
+            NSObject *obj = self.presentingViews[i];
+            if ([obj isKindOfClass:[UIView class]]) {
+                ((UIView *)obj).hidden = true;
+            }
+        }
+        NSInteger mid = (MAX_PAGERVC_COUNT_IN_SCROLLVIEW-1)/2;
+        for (NSInteger i = 0; i < MAX_PAGERVC_COUNT_IN_SCROLLVIEW; i++) {
+            UIViewController *controller = self.viewControllers[index+i-mid];
+            if (controller.parentViewController != nil) {
+                controller.view.frame = CGRectMake(i * self.view.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+                controller.view.hidden = false;
+                self.presentingViews[i] = controller.view;
+            }
+            if (i == mid && controller.parentViewController == nil) {
+                [self addChildViewController:controller];
+                controller.view.frame = CGRectMake(i * self.view.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+                [self.scrollView addSubview:controller.view];
+                [controller didMoveToParentViewController:self];
+                self.presentingViews[i] = controller.view;
+            }
+        }
+        [self.scrollView setContentOffset:CGPointMake(self.view.bounds.size.width * mid, 0) animated:NO];
+    }
+    
     [self callDelegateAtIndex:index]; // 用户滑动到其他viewController时调用，或者用户直接点选tabItem来切换viewController时调用（点选当前选中的tabItem也会调用）
+}
+
+- (NSInteger)pagerVCInitialSelectedIndex {
+    return self.selectedIndex;
 }
 
 #pragma mark - Accessor Methods
@@ -115,7 +166,7 @@
         _viewControllers = nil;
     }
     _viewControllers = viewControllers;
-    NSInteger actualVCCount = viewControllers.count > 3 ? 3 : viewControllers.count;
+    NSInteger actualVCCount = viewControllers.count > MAX_PAGERVC_COUNT_IN_SCROLLVIEW ? MAX_PAGERVC_COUNT_IN_SCROLLVIEW : viewControllers.count;
     self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * (actualVCCount), self.view.bounds.size.height);
 //    for (int i = 0; i < viewControllers.count; i++) {
 //        UIViewController *controller = viewControllers[i];
@@ -129,6 +180,7 @@
     controller.view.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
     [self.scrollView addSubview:controller.view];
     [controller didMoveToParentViewController:self];
+    self.presentingViews[0] = controller.view;
     [self updateTitles];
     
     [self.topTabBar removeFromSuperview];
@@ -219,4 +271,13 @@
     return self.topTabBar.selectedIndex;
 }
 
+- (NSMutableArray *)presentingViews {
+    if (!_presentingViews) {
+        _presentingViews = [NSMutableArray array];
+        for (NSInteger i = 0; i < MAX_PAGERVC_COUNT_IN_SCROLLVIEW; i++) {
+            [_presentingViews addObject:[NSNull null]];
+        }
+    }
+    return _presentingViews;
+}
 @end
