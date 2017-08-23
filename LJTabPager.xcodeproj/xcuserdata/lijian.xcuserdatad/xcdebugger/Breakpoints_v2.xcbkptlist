@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "509619841.883026"
+            timestampString = "519750169.326197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "-selectTabItemAtIndex:animated:"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "509619841.883026"
+            timestampString = "519750694.567766"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "-setSpacing:"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "509619841.883026"
+            timestampString = "519750694.567766"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
             landmarkName = "-recordInitialAndDestX"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "509619841.883026"
+            timestampString = "519750169.326197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "-layoutTabItems"
             landmarkType = "7">
          </BreakpointContent>

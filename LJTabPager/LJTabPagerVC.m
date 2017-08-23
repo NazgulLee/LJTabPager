@@ -37,6 +37,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
     _isScrollCausedByDragging = YES;
     _selectedControllerIndex = self.topTabBar.selectedIndex;
@@ -103,6 +104,7 @@
 
 #pragma mark - Accessor Methods
 - (void)setViewControllers:(NSArray *)viewControllers {
+    NSParameterAssert(viewControllers.count > 0);
     if (_viewControllers.count > 0) { //移除旧的_viewControllers
         for (int i = 0; i < _viewControllers.count; i++) {
             UIViewController *controller = _viewControllers[i];
@@ -113,15 +115,20 @@
         _viewControllers = nil;
     }
     _viewControllers = viewControllers;
-    self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * viewControllers.count, self.view.bounds.size.height);
-    for (int i = 0; i < viewControllers.count; i++) {
-        UIViewController *controller = viewControllers[i];
-        [self addChildViewController:controller];
-        controller.view.frame = CGRectMake(self.scrollView.bounds.size.width * i, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
-        [self.scrollView addSubview:controller.view];
-        [controller didMoveToParentViewController:self];
-    }
-    
+    NSInteger actualVCCount = viewControllers.count > 3 ? 3 : viewControllers.count;
+    self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * (actualVCCount), self.view.bounds.size.height);
+//    for (int i = 0; i < viewControllers.count; i++) {
+//        UIViewController *controller = viewControllers[i];
+//        [self addChildViewController:controller];
+//        controller.view.frame = CGRectMake(self.scrollView.bounds.size.width * i, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+//        [self.scrollView addSubview:controller.view];
+//        [controller didMoveToParentViewController:self];
+//    }
+    UIViewController *controller = viewControllers[0];
+    [self addChildViewController:controller];
+    controller.view.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+    [self.scrollView addSubview:controller.view];
+    [controller didMoveToParentViewController:self];
     [self updateTitles];
     
     [self.topTabBar removeFromSuperview];
