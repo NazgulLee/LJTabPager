@@ -15,31 +15,63 @@
     LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
 
 
-然后给pagerVC提供一个UIViewController的数组即可，pagerVC会自动调整pagerTabBar上按钮的间距：
+然后给pagerVC提供一个提供视图控制器的数据源：
+
+    pagerVC.vcsSource = _source;
+
+这个数据源要服从`LJTabPagerVCsSource`协议，这个协议有三个方法：
+
+	- (NSInteger)numberOfViewControllers; /// 要展示的视图控制器数量
+	- (NSArray *)titles; /// 要展示的标题数组
+	- (UIViewController *)viewControllerAtIndex:(NSInteger)index; /// 在位置index的视图控制器。
+
+主要讲一下`- (UIViewController *)viewControllerAtIndex:(NSInteger)index;`这个代理方法，当滑动到某个位置，该位置的视图控制器不存在时，会向数据源请求获取这个控制器。这样做主要是为了实现懒加载。比如网易新闻有十几个标题，不可能一开始就去创建对应的十几个控制器，只有用户滑到对应的位置才去创建对应的视图控制器，以节省内存。另外，当用户浏览了这十几个控制器，这十几个控制器都在内存中，会占用比较多的内存，这时可以调用LJTabPager的`- (void)reloadVCsExceptSelected:(BOOL)exceptSelected`方法，传入YES参数，把除当前展示的控制器以外的控制器移除，以降低内存占用。当用户再左右滑动时，由于对应的控制器不存在了，所以又去重新向vcsSource数据源获取对应的控制器。
   
-    pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
 
-不过在此之前，必须先给数组里面的viewController的title属性赋值，title即为展示在pagerTabBar上面的文字
+例如：
 
+	- (NSInteger)numberOfViewControllers {
+	    return 8;
+	}
+	
+	- (NSArray *)titles {
+	    NSArray *array = @[@"个性推荐", @"歌单", @"主播电台", @"排行榜", @"用户", @"歌手", @"专辑", @"单曲"];
+	    return array;
+	}
+	
+	- (UIViewController *)viewControllerAtIndex:(NSInteger)index {
+	    TableViewController *controller = [[TableViewController alloc] init];
+	    switch (index) {
+	        case 0:
+	            controller.title = @"个性推荐";
+	            break;
+	        case 1:
+	            controller.title = @"歌单";
+	            break;
+	        case 2:
+	            controller.title = @"主播电台";
+	            break;
+	        case 3:
+	            controller.title = @"排行榜";
+	            break;
+	        case 4:
+	            controller.title = @"用户";
+	            break;
+	        case 5:
+	            controller.title = @"歌手";
+	            break;
+	        case 6:
+	            controller.title = @"专辑";
+	            break;
+	        case 7:
+	            controller.title = @"单曲";
+	            break;
+	        default:
+	            break;
+	    }
+	    return controller;
+	}
 
-    TableViewController *controller1 = [[TableViewController alloc] init];
-    controller1.title = @"个性推荐";
-    TableViewController *controller2 = [[TableViewController alloc] init];
-    controller2.title = @"歌单";
-    TableViewController *controller3 = [[TableViewController alloc] init];
-    controller3.title = @"主播电台";
-    TableViewController *controller4 = [[TableViewController alloc] init];
-    controller4.title = @"排行榜";
-    TableViewController *controller5 = [[TableViewController alloc] init];
-    controller5.title = @"用户";
-    TableViewController *controller6 = [[TableViewController alloc] init];
-    controller6.title = @"歌手";
-    TableViewController *controller7 = [[TableViewController alloc] init];
-    controller7.title = @"专辑";
-    TableViewController *controller8 = [[TableViewController alloc] init];
-    controller8.title = @"单曲";
-    
-    
  若想使某个viewController在被选中或滑到了它时收到通知，只需让它服从`LJTabPagerVCDelegate`协议，然后实现`- (void)hasBeenSelectedAndShown`方法。
  
  默认pagerTabBar的背景色是半透明的，你也可以通过`LJTabPagerVC`的 `tabBarBKColor`属性自定义它的背景色。
