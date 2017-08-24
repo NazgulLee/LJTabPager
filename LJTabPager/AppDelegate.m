@@ -9,38 +9,26 @@
 #import "AppDelegate.h"
 #import "LJTabPagerVC.h"
 #import "TableViewController.h"
+#import "VcsSource.h"
 
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
-
+{
+    VcsSource *_source;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch. 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
-    TableViewController *controller1 = [[TableViewController alloc] init];
-    controller1.title = @"个性推荐";
-    TableViewController *controller2 = [[TableViewController alloc] init];
-    controller2.title = @"歌单";
-    TableViewController *controller3 = [[TableViewController alloc] init];
-    controller3.title = @"主播电台";
-    TableViewController *controller4 = [[TableViewController alloc] init];
-    controller4.title = @"排行榜";
-    TableViewController *controller5 = [[TableViewController alloc] init];
-    controller5.title = @"用户";
-    TableViewController *controller6 = [[TableViewController alloc] init];
-    controller6.title = @"歌手";
-    TableViewController *controller7 = [[TableViewController alloc] init];
-    controller7.title = @"专辑";
-    TableViewController *controller8 = [[TableViewController alloc] init];
-    controller8.title = @"单曲";
-
-    pagerVC.viewControllers = @[controller1, controller2, controller3, controller4, controller5, controller6, controller7, controller8];
+    _source = [[VcsSource alloc] init];
+    pagerVC.vcsSource = _source;
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];
     pagerVC.edgesForExtendedLayout = UIRectEdgeNone;
+    [pagerVC performSelector:@selector(reloadVCsExceptSelected:) withObject:@YES afterDelay:10];
     self.window.rootViewController = rootVC;
     [self.window makeKeyAndVisible];
     return YES;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		301C0F551F4DA1EA008221A2 /* VcsSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 301C0F541F4DA1EA008221A2 /* VcsSource.m */; };
 		307F44521E8FC17100ECF3DD /* LJPagerTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */; };
 		307F44531E8FC17100ECF3DD /* LJTabPagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F44511E8FC17100ECF3DD /* LJTabPagerVC.m */; };
 		30E713C11E5D9A0300099E81 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713C01E5D9A0300099E81 /* main.m */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		301C0F531F4DA1EA008221A2 /* VcsSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VcsSource.h; sourceTree = "<group>"; };
+		301C0F541F4DA1EA008221A2 /* VcsSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VcsSource.m; sourceTree = "<group>"; };
 		307F444E1E8FC17100ECF3DD /* LJPagerTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJPagerTabBar.h; sourceTree = "<group>"; };
 		307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJPagerTabBar.m; sourceTree = "<group>"; };
 		307F44501E8FC17100ECF3DD /* LJTabPagerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJTabPagerVC.h; sourceTree = "<group>"; };
@@ -68,6 +71,8 @@
 				30E713C31E5D9A0300099E81 /* AppDelegate.m */,
 				30E713DF1E5DD48600099E81 /* TableViewController.h */,
 				30E713E01E5DD48600099E81 /* TableViewController.m */,
+				301C0F531F4DA1EA008221A2 /* VcsSource.h */,
+				301C0F541F4DA1EA008221A2 /* VcsSource.m */,
 				30E713C81E5D9A0300099E81 /* Main.storyboard */,
 				30E713CB1E5D9A0300099E81 /* Assets.xcassets */,
 				30E713CD1E5D9A0300099E81 /* LaunchScreen.storyboard */,
@@ -89,10 +94,10 @@
 		30E713E21E5ED72100099E81 /* LJTabPager */ = {
 			isa = PBXGroup;
 			children = (
-				307F444E1E8FC17100ECF3DD /* LJPagerTabBar.h */,
-				307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */,
 				307F44501E8FC17100ECF3DD /* LJTabPagerVC.h */,
 				307F44511E8FC17100ECF3DD /* LJTabPagerVC.m */,
+				307F444E1E8FC17100ECF3DD /* LJPagerTabBar.h */,
+				307F444F1E8FC17100ECF3DD /* LJPagerTabBar.m */,
 			);
 			name = LJTabPager;
 			sourceTree = "<group>";
@@ -170,6 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				30E713C41E5D9A0300099E81 /* AppDelegate.m in Sources */,
+				301C0F551F4DA1EA008221A2 /* VcsSource.m in Sources */,
 				30E713C11E5D9A0300099E81 /* main.m in Sources */,
 				307F44531E8FC17100ECF3DD /* LJTabPagerVC.m in Sources */,
 				30E713E11E5DD48600099E81 /* TableViewController.m in Sources */,

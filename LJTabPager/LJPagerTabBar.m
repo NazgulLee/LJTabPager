@@ -63,7 +63,8 @@
         [self addSubview:tabItem];
     }
     
-    [self selectTabItemAtIndex:self.selectedIndex animated:NO];
+    [self highlightTabItemAtIndex:self.selectedIndex];
+    [self moveSelectedLineToIndex:self.selectedIndex animated:NO];
 }
 
 - (void)toogleSelectedTabItem:(UIButton *)tabItem {
@@ -71,6 +72,7 @@
 }
 
 - (void)selectTabItemAtIndex:(NSInteger)index animated:(BOOL)animated {
+    // 计算是否要调整tabBar的contentOffset，保证新选中的tabItem左右至少有一个未选中的tabItem可见
     NSInteger direction = 0;
     NSInteger destIndex = -1;
     CGFloat destOffsetx = self.contentOffset.x;
@@ -90,8 +92,21 @@
         destOffsetx = 0;
     if (destOffsetx > self.contentSize.width-self.bounds.size.width)
         destOffsetx = self.contentSize.width-self.bounds.size.width;
+    
     [self highlightTabItemAtIndex:index];
+    [self moveSelectedLineToIndex:index animated:YES];
     [self.pagerTabBarDelegate showViewAtIndex:index];
+    [self animateContentOffset:CGPointMake(destOffsetx, 0) withDuration:ANIMATE_DURATION];
+    //[self setContentOffset:CGPointMake(destOffsetx, 0) animated:YES];
+}
+
+- (void)highlightTabItemAtIndex:(NSInteger)index {
+    [((UIButton *)self.tabItems[self.selectedIndex]) setTitleColor:self.unSelectedColor forState:UIControlStateNormal];
+    [((UIButton *)self.tabItems[index]) setTitleColor:self.selectedTabItemColor forState:UIControlStateNormal];
+    self.selectedIndex = index;
+}
+
+- (void)moveSelectedLineToIndex:(NSInteger)index animated:(BOOL)animated {
     CGFloat endLineWidth = ((UIButton *)self.tabItems[index]).bounds.size.width;
     CGFloat endCenterX = ((UIButton *)self.tabItems[index]).center.x;
     if (animated) {
@@ -103,14 +118,6 @@
         self.selectedLine.center = CGPointMake(endCenterX, self.selectedLine.center.y);
         self.selectedLine.bounds = CGRectMake(0, 0, endLineWidth, self.selectedLine.bounds.size.height);
     }
-    [self animateContentOffset:CGPointMake(destOffsetx, 0) withDuration:ANIMATE_DURATION];
-    //[self setContentOffset:CGPointMake(destOffsetx, 0) animated:YES];
-}
-
-- (void)highlightTabItemAtIndex:(NSInteger)index {
-    [((UIButton *)self.tabItems[self.selectedIndex]) setTitleColor:self.unSelectedColor forState:UIControlStateNormal];
-    [((UIButton *)self.tabItems[index]) setTitleColor:self.selectedTabItemColor forState:UIControlStateNormal];
-    self.selectedIndex = index;
 }
 
 - (NSArray *)tabItemsWithTitles:(NSArray *)titles {

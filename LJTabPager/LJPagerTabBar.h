@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, SCROLL_ORIENTATION) {
 
 @required
 - (void)showViewAtIndex:(NSInteger)index;
-- (NSInteger)pagerVCInitialSelectedIndex;
+
 @end
 
 @interface LJPagerTabBar : UIScrollView
