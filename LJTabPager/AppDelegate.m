@@ -24,13 +24,10 @@
     // Override point for customization after application launch. 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
-    //pagerVC.selectedLineColor = [UIColor blueColor];
     _source = [[VcsSource alloc] init];
     pagerVC.vcsSource = _source;
-    //pagerVC.selectedTabItemColor = [UIColor blueColor];
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];
     pagerVC.edgesForExtendedLayout = UIRectEdgeNone;
-    //[pagerVC performSelector:@selector(reloadVCsExceptSelected:) withObject:@YES afterDelay:10];
     self.window.rootViewController = rootVC;
     [self.window makeKeyAndVisible];
     return YES;
