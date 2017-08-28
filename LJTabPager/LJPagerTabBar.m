@@ -21,36 +21,53 @@
 @property (nonatomic) CGFloat tabBarInitialX;
 @property (nonatomic) CGFloat tabBarLeftDestX;
 @property (nonatomic) CGFloat tabBarRightDestX;
+@property (nonatomic) UIView *containerView;
 
 @end
 
 @implementation LJPagerTabBar
 {
     CGFloat _totalWidth; //所有tabItems的宽度之和
+    BOOL _needsLayoutTabItems;
 }
 
 @synthesize selectedLineColor = _selectedLineColor;
 @synthesize selectedTabItemColor = _selectedTabItemColor;
 
-- (instancetype)initWithTitles:(NSArray *)titles frame:(CGRect)frame{
-    self = [super initWithFrame:frame];
-    if (self != nil) {
+- (instancetype)init {
+    self = [super init];
+    if (self) {
         self.showsHorizontalScrollIndicator = NO;
+        self.showsVerticalScrollIndicator = NO;
         _scrollOrientation = SCROLL_ORIENTATION_NONE;
-        [self configureViews];
-        if (titles.count > 0) {
-            self.titles = titles;
-            [self layoutTabItems];
-        }
+        //[self configureSubviews];
     }
     return self;
 }
 
-- (void)configureViews {
-
-    [self addSubview:self.shadowView];
+- (void)configureSubviews {
+    [self addSubview:self.containerView];
+    self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.containerView}]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.containerView}]];
     
-    [self addSubview:self.selectedLine];
+    [self.containerView addSubview:self.shadowView];
+    self.shadowView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.shadowView}]];
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.containerView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.containerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:1]];
+    //_shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (self.selectedLine.superview == nil)
+        [self addSubview:self.selectedLine];
+    if (self.shadowView.superview == nil)
+        [self addSubview:self.shadowView];
+    if (_needsLayoutTabItems)
+        [self layoutTabItems];
 }
 
 - (void)layoutTabItems {
@@ -62,6 +79,7 @@
         tabItem.center = CGPointMake(distanceToLeftEdge - tabItem.bounds.size.width / 2, self.bounds.size.height / 2);
         [self addSubview:tabItem];
     }
+    _needsLayoutTabItems = NO;
     
     [self highlightTabItemAtIndex:self.selectedIndex];
     [self moveSelectedLineToIndex:self.selectedIndex animated:NO];
@@ -247,7 +265,9 @@
         }
     }
     self.tabItems = [self tabItemsWithTitles:titles];
-    [self layoutTabItems];
+    self.selectedIndex = 0;
+    _needsLayoutTabItems = YES;
+    [self setNeedsLayout];
 }
 
 - (UIColor *)selectedLineColor {
@@ -316,10 +336,18 @@
 }
 - (UIView *)shadowView {
     if (!_shadowView) {
+        //_shadowView = [[UIView alloc] init];
         _shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
         _shadowView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.8];
     }
     return _shadowView;
+}
+
+- (UIView *)containerView {
+    if (!_containerView) {
+        _containerView = [[UIView alloc] init];
+    }
+    return _containerView;
 }
 
 @end

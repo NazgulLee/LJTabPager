@@ -51,11 +51,32 @@
     _isScrollCausedByDragging = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO; //告诉viewController不要自动调整scrollview的contentInset
-    [self.view addSubview:self.scrollView];
-    [self.view addSubview:self.topTabBar];
     
+    [self configureViews];
     _initialSelectedIndex = self.topTabBar.selectedIndex;
     [self loadVCs];
+}
+
+- (void)configureViews {
+    [self.view addSubview:self.scrollView];
+    
+    self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
+    
+    [self.view addSubview:self.topTabBar];
+    self.topTabBar.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.topTabBar}]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topTabBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topTabBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:PAGERTABBAR_HEIGHT]];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -70,9 +91,6 @@
         NSAssert(_vcsNumber == self.titles.count, @"[vcsSource titles].count must equal to [vcsSource numberOfViewControllers]");
         _actualVCCount = _vcsNumber > MAX_PAGERVC_COUNT_IN_SCROLLVIEW ? MAX_PAGERVC_COUNT_IN_SCROLLVIEW : _vcsNumber;
         self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * (_actualVCCount), self.view.bounds.size.height);
-        
-        [self.topTabBar removeFromSuperview];
-        [self.view addSubview:self.topTabBar]; //解决先设置selectedLine颜色，再设置viewControllers产生的奇怪的bug
         
         [self showViewAtIndex:self.selectedIndex];
     }
@@ -210,8 +228,7 @@
 
 - (LJPagerTabBar *)topTabBar {
     if (!_topTabBar) {
-        CGFloat width = _viewFrame.size.width == 0 ? SCREEN_WIDTH : _viewFrame.size.width;
-        _topTabBar = [[LJPagerTabBar alloc] initWithTitles:self.titles frame:CGRectMake(0, 0, width, PAGERTABBAR_HEIGHT)];
+        _topTabBar = [[LJPagerTabBar alloc] init];
         _topTabBar.backgroundColor = self.tabBarBKColor;
         _topTabBar.pagerTabBarDelegate = self;
     }
@@ -227,8 +244,6 @@
         _scrollView.bounces = NO;
         _scrollView.directionalLockEnabled = YES;
         _scrollView.delaysContentTouches = YES;
-        CGFloat width = _viewFrame.size.width == 0 ? SCREEN_WIDTH : _viewFrame.size.width;
-        _scrollView.frame = CGRectMake(0, 0, width, self.view.bounds.size.height);
     }
     return _scrollView;
 }
