@@ -9,6 +9,7 @@
 #define MIN_SPACING 40.0
 
 #define ANIMATE_DURATION 0.25
+extern float PAGERTABBAR_HEIGHT;
 
 #import "LJPagerTabBar.h"
 
@@ -21,7 +22,6 @@
 @property (nonatomic) CGFloat tabBarInitialX;
 @property (nonatomic) CGFloat tabBarLeftDestX;
 @property (nonatomic) CGFloat tabBarRightDestX;
-@property (nonatomic) UIView *containerView;
 
 @end
 
@@ -29,6 +29,7 @@
 {
     CGFloat _totalWidth; //所有tabItems的宽度之和
     BOOL _needsLayoutTabItems;
+    CGRect _lastBounds;
 }
 
 @synthesize selectedLineColor = _selectedLineColor;
@@ -40,34 +41,29 @@
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
         _scrollOrientation = SCROLL_ORIENTATION_NONE;
-        //[self configureSubviews];
     }
     return self;
 }
 
-- (void)configureSubviews {
-    [self addSubview:self.containerView];
-    self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.containerView}]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.containerView}]];
-    
-    [self.containerView addSubview:self.shadowView];
-    self.shadowView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.shadowView}]];
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.containerView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.containerView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.shadowView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:1]];
-    //_shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
-    if (self.selectedLine.superview == nil)
-        [self addSubview:self.selectedLine];
     if (self.shadowView.superview == nil)
         [self addSubview:self.shadowView];
-    if (_needsLayoutTabItems)
+    if (self.selectedLine.superview == nil) {
+        self.selectedLine.frame = CGRectMake(0, self.bounds.size.height - 2, 0, 2);
+        [self addSubview:self.selectedLine];
+    }
+    
+    if ([self isDifferent:_lastBounds from:self.bounds] || _needsLayoutTabItems) {
+        _lastBounds = self.bounds;
         [self layoutTabItems];
+    }
+}
+
+- (BOOL)isDifferent:(CGRect)rect1 from:(CGRect)rect2 {
+    if (rect1.size.width != rect2.size.width || rect1.size.height != rect2.size.height)
+        return YES;
+    return NO;
 }
 
 - (void)layoutTabItems {
@@ -115,7 +111,6 @@
     [self moveSelectedLineToIndex:index animated:YES];
     [self.pagerTabBarDelegate showViewAtIndex:index];
     [self animateContentOffset:CGPointMake(destOffsetx, 0) withDuration:ANIMATE_DURATION];
-    //[self setContentOffset:CGPointMake(destOffsetx, 0) animated:YES];
 }
 
 - (void)highlightTabItemAtIndex:(NSInteger)index {
@@ -160,7 +155,6 @@
     self.spacing = (self.bounds.size.width - _totalWidth) / self.titles.count;
     if (self.titles.count == 1 || self.spacing >= MIN_SPACING) {
         self.contentSize = self.bounds.size;
-       
     } else {
         NSInteger i;
         CGFloat visibleItemsWidth = _totalWidth;
@@ -175,11 +169,13 @@
         }
         self.contentSize = CGSizeMake(self.spacing * self.titles.count + _totalWidth, self.bounds.size.height);
     }
-    self.shadowView.bounds = CGRectMake(0, 0, self.contentSize.width, self.shadowView.bounds.size.height);
+    self.shadowView.frame = CGRectMake(0, self.bounds.size.height - 1, self.contentSize.width, 1);
 }
 
 - (void)recordInitialAndDestX {
     self.tabBarInitialX = self.contentOffset.x;
+    self.tabBarRightDestX = 0;
+    self.tabBarLeftDestX = self.contentSize.width - self.bounds.size.width;
     if (self.selectedIndex < self.tabItems.count - 2) {
         // 当前选中tabItem的下下个tabItem的右边界加tabItem间隔的一半，再减去屏幕宽度，作为上面的scrollView的至少要有的contentOffset
         self.tabBarRightDestX = ((UIButton *)self.tabItems[self.selectedIndex + 2]).frame.origin.x + ((UIButton *)self.tabItems[self.selectedIndex + 2]).frame.size.width + self.spacing / 2 - self.bounds.size.width;
@@ -315,7 +311,8 @@
 }
 - (UIView *)selectedLine {
     if (!_selectedLine) {
-        _selectedLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 2, 0, 2)];
+        _selectedLine = [[UIView alloc] init];
+//        _selectedLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 2, 0, 2)];
         _selectedLine.backgroundColor = self.selectedLineColor;
     }
     return _selectedLine;
@@ -330,24 +327,16 @@
 
 - (CGFloat)tabBarRightDestX {
     if (!_tabBarRightDestX) {
-        _tabBarRightDestX = self.contentSize.width - self.bounds.size.width;
+        _tabBarRightDestX = 0;
     }
     return _tabBarRightDestX;
 }
 - (UIView *)shadowView {
     if (!_shadowView) {
-        //_shadowView = [[UIView alloc] init];
-        _shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 1, self.bounds.size.width, 1)];
+        _shadowView = [[UIView alloc] init];
         _shadowView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.8];
     }
     return _shadowView;
-}
-
-- (UIView *)containerView {
-    if (!_containerView) {
-        _containerView = [[UIView alloc] init];
-    }
-    return _containerView;
 }
 
 @end

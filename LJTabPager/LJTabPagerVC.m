@@ -12,7 +12,7 @@
 #define CONTENT_SCROLLVIEW 1000
 #define PAGERTABBAR_SCROLLVIEW 1001
 
-#define PAGERTABBAR_HEIGHT 40
+const float PAGERTABBAR_HEIGHT = 40;
 
 #define MAX_PAGERVC_COUNT_IN_SCROLLVIEW 3
 
@@ -51,7 +51,7 @@
     _isScrollCausedByDragging = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO; //告诉viewController不要自动调整scrollview的contentInset
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
     [self configureViews];
     _initialSelectedIndex = self.topTabBar.selectedIndex;
     [self loadVCs];
@@ -59,7 +59,6 @@
 
 - (void)configureViews {
     [self.view addSubview:self.scrollView];
-    
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
@@ -70,13 +69,22 @@
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topTabBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topTabBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:PAGERTABBAR_HEIGHT]];
 }
-
+- (void)orientationChanged:(NSNotification *)notification {
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight) {
+        
+    } else if (orientation == UIDeviceOrientationPortrait) {
+        
+    }
+}
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+    self.scrollView.contentSize = CGSizeMake(_actualVCCount * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+    [self showViewAtIndex:self.selectedIndex];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -144,9 +152,9 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"****%f", _initialSelectedIndex * self.view.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX);
+    NSLog(@"****%f", _initialSelectedIndex * self.scrollView.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX);
     if (_isScrollCausedByDragging) {
-        self.topTabBar.pagerContentOffsetX = _initialSelectedIndex * self.view.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX;
+        self.topTabBar.pagerContentOffsetX = _initialSelectedIndex * self.scrollView.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX;
     }
     if (scrollView.contentOffset.x - _initialContentOffsetX > 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
@@ -168,55 +176,99 @@
 - (void)showViewAtIndex:(NSInteger)index {
     _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
+    for (UIView *view in self.viewsInScrollview) {
+        if ([view isKindOfClass:[UIView class]]) {
+            view.hidden = YES;
+        }
+    }
     UIViewController *controller = self.onViewControllers[index];
     if ([controller isKindOfClass:[NSNull class]]) {
         controller = [self.vcsSource viewControllerAtIndex:index];
         self.onViewControllers[index] = controller;
     }
-    if (index == _vcsNumber-1 || index == 0) {
-        UIView *view = index == 0 ? self.viewsInScrollview[0] : self.viewsInScrollview[_actualVCCount-1];
-        if ([view isKindOfClass:[UIView class]]) {
-            view.hidden = true;
-        }
-        CGFloat x = index == 0 ? 0 : (_actualVCCount-1)*self.view.bounds.size.width;
-        if (controller.parentViewController == nil) {
-            [self addChildViewController:controller];
-            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
-            [self.scrollView addSubview:controller.view];
-            [controller didMoveToParentViewController:self];
-        } else {
-            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
-            controller.view.hidden = false;
-        }
-        self.viewsInScrollview[(index == 0 ? 0 : _actualVCCount-1)] = controller.view;
-        [self.scrollView setContentOffset:CGPointMake(x, 0) animated:NO];
-    } else {
-        for (NSInteger i = 0; i < _actualVCCount; i++) {
-            UIView *view = self.viewsInScrollview[i];
-            if ([view isKindOfClass:[UIView class]]) {
-                view.hidden = true;
-            }
-        }
-        NSInteger mid = (_actualVCCount-1)/2;
-        for (NSInteger i = 0; i < _actualVCCount; i++) {
-            UIViewController *controller = self.onViewControllers[index+i-mid];
-            // 两边的viewController，如果原来加载过，就把它放上去，否则先不加载
-            if ([controller isKindOfClass:[UIViewController class]] && controller.parentViewController != nil) {
-                controller.view.frame = CGRectMake(i * self.view.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
-                controller.view.hidden = false;
-                self.viewsInScrollview[i] = controller.view;
-            }
-            if (i == mid && [controller isKindOfClass:[UIViewController class]] && controller.parentViewController == nil) {
-                [self addChildViewController:controller];
-                controller.view.frame = CGRectMake(i * self.view.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
-                [self.scrollView addSubview:controller.view];
-                [controller didMoveToParentViewController:self];
-                self.viewsInScrollview[i] = controller.view;
-            }
-        }
-        [self.scrollView setContentOffset:CGPointMake(self.view.bounds.size.width * mid, 0) animated:NO];
-    }
+    NSInteger targetIndex;
+    if (index == _vcsNumber-1 || index == 0)
+        targetIndex = index == 0 ? 0 : _actualVCCount-1;
+    else
+        targetIndex = (_actualVCCount-1)/2;
     
+    CGFloat targetx = targetIndex * self.scrollView.bounds.size.width;
+    if (controller.parentViewController == nil) {
+        [self addChildViewController:controller];
+        controller.view.frame = CGRectMake(targetx, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+        [self.scrollView addSubview:controller.view];
+        [controller didMoveToParentViewController:self];
+    } else {
+        controller.view.frame = CGRectMake(targetx, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+        controller.view.hidden = NO;
+    }
+    self.viewsInScrollview[targetIndex] = controller.view;
+    if (index-1 >= 0) {
+        UIViewController *leftController = self.onViewControllers[index-1];
+        if ([leftController isKindOfClass:[UIViewController class]] && leftController.parentViewController != nil) {
+            CGSize size = self.scrollView.bounds.size;
+            leftController.view.frame = CGRectMake(targetx - size.width, 0, size.width, size.height);
+            leftController.view.hidden = NO;
+            self.viewsInScrollview[targetIndex-1] = leftController.view;
+        }
+    }
+    if (index+1 < _vcsNumber) {
+        UIViewController *rightController = self.onViewControllers[index+1];
+        if ([rightController isKindOfClass:[UIViewController class]] && rightController.parentViewController != nil) {
+            CGSize size = self.scrollView.bounds.size;
+            rightController.view.frame = CGRectMake(targetx + size.width, 0, size.width, size.height);
+            rightController.view.hidden = NO;
+            self.viewsInScrollview[targetIndex+1] = rightController.view;
+        }
+    }
+    [self.scrollView setContentOffset:CGPointMake(self.scrollView.bounds.size.width * targetIndex, 0) animated:NO];
+//    
+//    if (index == _vcsNumber-1 || index == 0) {
+//        targetIndex = index == 0 ? 0 : _actualVCCount-1;
+//        
+//        UIView *view = self.viewsInScrollview[targetIndex];
+//        if ([view isKindOfClass:[UIView class]]) {
+//            view.hidden = true;
+//        }
+//        CGFloat x = index == 0 ? 0 : (_actualVCCount-1)*self.scrollView.bounds.size.width;
+//        if (controller.parentViewController == nil) {
+//            [self addChildViewController:controller];
+//            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+//            [self.scrollView addSubview:controller.view];
+//            [controller didMoveToParentViewController:self];
+//        } else {
+//            controller.view.frame = CGRectMake(x, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+//            controller.view.hidden = false;
+//        }
+//        self.viewsInScrollview[(index == 0 ? 0 : _actualVCCount-1)] = controller.view;
+//        [self.scrollView setContentOffset:CGPointMake(x, 0) animated:NO];
+//    } else {
+//        for (NSInteger i = 0; i < _actualVCCount; i++) {
+//            UIView *view = self.viewsInScrollview[i];
+//            if ([view isKindOfClass:[UIView class]]) {
+//                view.hidden = true;
+//            }
+//        }
+//        NSInteger mid = (_actualVCCount-1)/2;
+//        for (NSInteger i = 0; i < _actualVCCount; i++) {
+//            UIViewController *tempController = self.onViewControllers[index+i-mid];
+//            // 两边的viewController，如果原来加载过，就把它放上去，否则先不加载
+//            if ([tempController isKindOfClass:[UIViewController class]] && tempController.parentViewController != nil) {
+//                tempController.view.frame = CGRectMake(i * self.scrollView.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+//                tempController.view.hidden = false;
+//                self.viewsInScrollview[i] = tempController.view;
+//            }
+//            if (i == mid && [tempController isKindOfClass:[UIViewController class]] && tempController.parentViewController == nil) {
+//                [self addChildViewController:tempController];
+//                tempController.view.frame = CGRectMake(i * self.scrollView.bounds.size.width, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+//                [self.scrollView addSubview:tempController.view];
+//                [tempController didMoveToParentViewController:self];
+//                self.viewsInScrollview[i] = tempController.view;
+//            }
+//        }
+//        [self.scrollView setContentOffset:CGPointMake(self.scrollView.bounds.size.width * mid, 0) animated:NO];
+//    }
+    //[self.scrollView bringSubviewToFront:controller.view];
     [self callDelegateAtIndex:index]; // 用户滑动到其他viewController时调用，或者用户直接点选tabItem来切换viewController时调用（点选当前选中的tabItem也会调用）
 }
 
@@ -324,4 +376,5 @@
     }
     return _onViewControllers;
 }
+
 @end
