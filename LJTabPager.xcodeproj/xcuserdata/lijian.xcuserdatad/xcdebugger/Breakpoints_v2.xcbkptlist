@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "-selectTabItemAtIndex:animated:"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "303"
-            endingLineNumber = "303"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
             landmarkName = "-setSpacing:"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
+            startingLineNumber = "181"
+            endingLineNumber = "181"
             landmarkName = "-recordInitialAndDestX"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "-layoutTabItems"
             landmarkType = "7">
          </BreakpointContent>
@@ -84,11 +84,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "-scrollViewDidScroll:"
             landmarkType = "7">
          </BreakpointContent>
@@ -100,11 +100,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
             landmarkName = "-scrollViewDidEndDecelerating:"
             landmarkType = "7">
          </BreakpointContent>
@@ -116,11 +116,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "299"
-            endingLineNumber = "299"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
             landmarkName = "-scrollView"
             landmarkType = "7">
          </BreakpointContent>
@@ -132,11 +132,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620063.514882"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
             landmarkName = "-layoutSubviews"
             landmarkType = "7">
          </BreakpointContent>
@@ -148,11 +148,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
             landmarkName = "-caculateSpacing"
             landmarkType = "7">
          </BreakpointContent>
@@ -180,11 +180,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "-tabItemsWithTitles:"
             landmarkType = "7">
          </BreakpointContent>
@@ -196,27 +196,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "-viewDidLayoutSubviews"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "-viewWillLayoutSubviews"
             landmarkType = "7">
          </BreakpointContent>
@@ -267,11 +251,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
             landmarkName = "-reloadVCsExceptSelected:"
             landmarkType = "7">
          </BreakpointContent>
@@ -283,11 +267,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "-reloadVCsExceptSelected:"
             landmarkType = "7">
          </BreakpointContent>
@@ -299,11 +283,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
             landmarkName = "-reloadVCsExceptSelected:"
             landmarkType = "7">
          </BreakpointContent>
@@ -315,11 +299,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
             landmarkName = "-reloadVCsExceptSelected:"
             landmarkType = "7">
          </BreakpointContent>
@@ -331,11 +315,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "-loadVCs"
             landmarkType = "7">
          </BreakpointContent>
@@ -347,11 +331,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616866.617058"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
             landmarkName = "-showViewAtIndex:"
             landmarkType = "7">
          </BreakpointContent>
@@ -363,11 +347,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "-checkSelectedTabItemVisible"
             landmarkType = "7">
          </BreakpointContent>
@@ -379,11 +363,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "-checkSelectedTabItemVisible"
             landmarkType = "7">
          </BreakpointContent>
@@ -395,11 +379,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
             landmarkName = "-checkSelectedTabItemVisible"
             landmarkType = "7">
          </BreakpointContent>
@@ -411,11 +395,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
             landmarkName = "-setTitles:"
             landmarkType = "7">
          </BreakpointContent>
@@ -427,11 +411,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "-caculateSpacing"
             landmarkType = "7">
          </BreakpointContent>
@@ -443,11 +427,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "316"
-            endingLineNumber = "316"
+            startingLineNumber = "317"
+            endingLineNumber = "317"
             landmarkName = "-selectedLine"
             landmarkType = "7">
          </BreakpointContent>
@@ -459,11 +443,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJTabPagerVC.m"
-            timestampString = "525616823.764726"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
             landmarkName = "-orientationChanged:"
             landmarkType = "7">
          </BreakpointContent>
@@ -476,11 +460,11 @@
             condition = "scale&gt;0.1"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620749.059818"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "233"
+            endingLineNumber = "233"
             landmarkName = "-setPagerContentOffsetX:"
             landmarkType = "7">
          </BreakpointContent>
@@ -492,11 +476,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/LJPagerTabBar.m"
-            timestampString = "525620807.800609"
+            timestampString = "525667460.141094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "-layoutSubviews"
             landmarkType = "7">
          </BreakpointContent>

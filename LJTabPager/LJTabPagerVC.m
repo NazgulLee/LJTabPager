@@ -36,7 +36,7 @@ const float PAGERTABBAR_HEIGHT = 40;
     NSInteger _vcsNumber; //!< 视图控制器的数量
     NSInteger _actualVCCount; //!< scrollView能放置的viewController数量
     CGRect _viewFrame;
-    CGRect _lastBounds;
+    UIDeviceOrientation _lastOrientation;
 }
 
 @synthesize topTabBar = _topTabBar;
@@ -50,6 +50,7 @@ const float PAGERTABBAR_HEIGHT = 40;
     self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
     _isScrollCausedByDragging = YES;
+    _lastOrientation = [UIDevice currentDevice].orientation;
     
     self.automaticallyAdjustsScrollViewInsets = NO; //告诉viewController不要自动调整scrollview的contentInset
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -84,7 +85,9 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    if (_lastBounds.size.width != self.scrollView.bounds.size.width || _lastBounds.size.height != self.scrollView.bounds.size.height) {
+    UIDeviceOrientation newOrientation = [UIDevice currentDevice].orientation;
+    if (newOrientation != _lastOrientation) {
+        _lastOrientation = newOrientation;
         self.scrollView.contentSize = CGSizeMake(_actualVCCount * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self showViewAtIndex:self.selectedIndex];
     }

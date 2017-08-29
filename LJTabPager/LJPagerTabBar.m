@@ -29,7 +29,7 @@ extern float PAGERTABBAR_HEIGHT;
 {
     CGFloat _totalWidth; //所有tabItems的宽度之和
     BOOL _needsLayoutTabItems;
-    CGRect _lastBounds;
+    UIDeviceOrientation _lastOrientation;
 }
 
 @synthesize selectedLineColor = _selectedLineColor;
@@ -40,6 +40,7 @@ extern float PAGERTABBAR_HEIGHT;
     if (self) {
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
+        _lastOrientation = [UIDevice currentDevice].orientation;
         _scrollOrientation = SCROLL_ORIENTATION_NONE;
     }
     return self;
@@ -53,9 +54,9 @@ extern float PAGERTABBAR_HEIGHT;
         self.selectedLine.frame = CGRectMake(0, self.bounds.size.height - 2, 0, 2);
         [self addSubview:self.selectedLine];
     }
-    
-    if ([self isDifferent:_lastBounds from:self.bounds] || _needsLayoutTabItems) {
-        _lastBounds = self.bounds;
+    UIDeviceOrientation newOrientation = [UIDevice currentDevice].orientation;
+    if (_needsLayoutTabItems || newOrientation != _lastOrientation) {
+        _lastOrientation = newOrientation;
         [self layoutTabItems];
     }
 }
