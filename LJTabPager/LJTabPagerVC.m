@@ -142,7 +142,7 @@ const float PAGERTABBAR_HEIGHT = 40;
     if ([controller isKindOfClass:[UIViewController class]]) {
         if ([controller conformsToProtocol:@protocol(LJTabPagerVCDelegate)]) {
             if ([controller respondsToSelector:@selector(hasBeenSelectedAndShown:)]) {
-                [controller performSelector:@selector(hasBeenSelectedAndShown:) withObject:nil afterDelay:0];
+                [controller performSelector:@selector(hasBeenSelectedAndShown:) withObject:object afterDelay:0];
             }
         }
     }
