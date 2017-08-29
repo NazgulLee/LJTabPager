@@ -11,7 +11,7 @@
 @protocol LJTabPagerVCDelegate <NSObject>
 
 @optional
-- (void)hasBeenSelectedAndShown;
+- (void)hasBeenSelectedAndShown:(NSNumber *)firstShown;
 
 @end
 
