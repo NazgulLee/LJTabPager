@@ -134,10 +134,12 @@ const float PAGERTABBAR_HEIGHT = 40;
 }
 
 - (void)callDelegateAtIndex:(NSInteger)index {
-    UIViewController *controller = [self.vcsSource viewControllerAtIndex:index];
-    if ([controller conformsToProtocol:@protocol(LJTabPagerVCDelegate)]) {
-        if ([controller respondsToSelector:@selector(hasBeenSelectedAndShown)]) {
-            [controller performSelector:@selector(hasBeenSelectedAndShown) withObject:nil afterDelay:0];
+    UIViewController *controller = self.onViewControllers[index];
+    if ([controller isKindOfClass:[UIViewController class]]) {
+        if ([controller conformsToProtocol:@protocol(LJTabPagerVCDelegate)]) {
+            if ([controller respondsToSelector:@selector(hasBeenSelectedAndShown)]) {
+                [controller performSelector:@selector(hasBeenSelectedAndShown) withObject:nil afterDelay:0];
+            }
         }
     }
 }
