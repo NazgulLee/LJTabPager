@@ -86,7 +86,7 @@ const float PAGERTABBAR_HEIGHT = 40;
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     UIDeviceOrientation newOrientation = [UIDevice currentDevice].orientation;
-    if (newOrientation != _lastOrientation) {
+    if (self.scrollView.contentSize.width == 0 || self.scrollView.contentSize.height == 0 || newOrientation != _lastOrientation) {
         _lastOrientation = newOrientation;
         self.scrollView.contentSize = CGSizeMake(_actualVCCount * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self showViewAtIndex:self.selectedIndex];
@@ -105,7 +105,7 @@ const float PAGERTABBAR_HEIGHT = 40;
         self.titles = [self.vcsSource titles];
         NSAssert(_vcsNumber == self.titles.count, @"[vcsSource titles].count must equal to [vcsSource numberOfViewControllers]");
         _actualVCCount = _vcsNumber > MAX_PAGERVC_COUNT_IN_SCROLLVIEW ? MAX_PAGERVC_COUNT_IN_SCROLLVIEW : _vcsNumber;
-        self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * (_actualVCCount), self.view.bounds.size.height);
+        //self.scrollView.contentSize = CGSizeMake(self.scrollView.bounds.size.width * (_actualVCCount), self.scrollView.bounds.size.height);
         
         [self showViewAtIndex:self.selectedIndex];
     }
