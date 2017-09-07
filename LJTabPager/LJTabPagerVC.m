@@ -153,9 +153,8 @@ const float PAGERTABBAR_HEIGHT = 40;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"****%f", _initialSelectedIndex * self.scrollView.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX);
     if (_isScrollCausedByDragging) {
-        self.topTabBar.pagerContentOffsetX = _initialSelectedIndex * self.scrollView.bounds.size.width + scrollView.contentOffset.x - _initialContentOffsetX;
+        self.topTabBar.pagerContentOffsetX = scrollView.contentOffset.x;
     }
     if (scrollView.contentOffset.x - _initialContentOffsetX > 0) {
         self.topTabBar.scrollOrientation = SCROLL_ORIENTATION_RIGHT;
