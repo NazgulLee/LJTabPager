@@ -23,7 +23,6 @@ const float PAGERTABBAR_HEIGHT = 40;
 @property (nonatomic) NSArray *titles; /// 每次设置titles会使topTabBar重新布局
 @property (nonatomic) LJPagerTabBar *topTabBar;
 @property (nonatomic) UIScrollView *scrollView;
-@property (nonatomic) NSMutableArray *viewsInScrollview; //!< 存放放置在scrollView中的视图
 @property (nonatomic) NSMutableArray *onViewControllers; //!< 存放已加载的视图控制器
 
 @end
@@ -34,7 +33,6 @@ const float PAGERTABBAR_HEIGHT = 40;
     CGFloat _initialContentOffsetX; //!< 一次滑动开始时scrollView的contentOffset
     NSInteger _initialSelectedIndex; //!< 一次滑动开始时选中的index
     NSInteger _vcsNumber; //!< 视图控制器的数量
-    NSInteger _actualVCCount; //!< scrollView能放置的viewController数量
     CGRect _viewFrame;
     UIDeviceOrientation _lastOrientation;
 }
@@ -88,7 +86,13 @@ const float PAGERTABBAR_HEIGHT = 40;
     UIDeviceOrientation newOrientation = [UIDevice currentDevice].orientation;
     if (self.scrollView.contentSize.width == 0 || self.scrollView.contentSize.height == 0 || newOrientation != _lastOrientation) {
         _lastOrientation = newOrientation;
-        self.scrollView.contentSize = CGSizeMake(_actualVCCount * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
+        for (NSInteger index = 0; index < self.onViewControllers.count; index++) {
+            UIViewController *controller = self.onViewControllers[index];
+            if ([controller isKindOfClass:[UIViewController class]]) {
+                controller.view.hidden = YES;
+            }
+        }
+        self.scrollView.contentSize = CGSizeMake(_vcsNumber * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self showViewAtIndex:self.selectedIndex];
     }
     
@@ -104,9 +108,6 @@ const float PAGERTABBAR_HEIGHT = 40;
         _vcsNumber = [self.vcsSource numberOfViewControllers];
         self.titles = [self.vcsSource titles];
         NSAssert(_vcsNumber == self.titles.count, @"[vcsSource titles].count must equal to [vcsSource numberOfViewControllers]");
-        _actualVCCount = _vcsNumber > MAX_PAGERVC_COUNT_IN_SCROLLVIEW ? MAX_PAGERVC_COUNT_IN_SCROLLVIEW : _vcsNumber;
-        //self.scrollView.contentSize = CGSizeMake(self.scrollView.bounds.size.width * (_actualVCCount), self.scrollView.bounds.size.height);
-        
         [self showViewAtIndex:self.selectedIndex];
     }
 }
@@ -124,15 +125,6 @@ const float PAGERTABBAR_HEIGHT = 40;
                     [controller removeFromParentViewController];
                     self.onViewControllers[index] = [NSNull null];
                 }
-            }
-        }
-        for (NSInteger index = 0; index < self.viewsInScrollview.count; index++) {
-            UIView *view = self.viewsInScrollview[index];
-            if ([view isKindOfClass:[UIView class]]) {
-                if (exceptSelected && view == ((UIViewController *)self.onViewControllers[self.selectedIndex]).view)
-                    ;
-                else
-                    self.viewsInScrollview[index] = [NSNull null];
             }
         }
         if (!exceptSelected)
@@ -186,24 +178,13 @@ const float PAGERTABBAR_HEIGHT = 40;
     BOOL _firstShown = NO;
     _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
-    for (UIView *view in self.viewsInScrollview) {
-        if ([view isKindOfClass:[UIView class]]) {
-            view.hidden = YES;
-        }
-    }
     UIViewController *controller = self.onViewControllers[index];
     if ([controller isKindOfClass:[NSNull class]]) {
         controller = [self.vcsSource viewControllerAtIndex:index];
         self.onViewControllers[index] = controller;
         _firstShown = YES;
     }
-    NSInteger targetIndex;
-    if (index == _vcsNumber-1 || index == 0)
-        targetIndex = index == 0 ? 0 : _actualVCCount-1;
-    else
-        targetIndex = (_actualVCCount-1)/2;
-    
-    CGFloat targetx = targetIndex * self.scrollView.bounds.size.width;
+    CGFloat targetx = index * self.scrollView.bounds.size.width;
     if (controller.parentViewController == nil) {
         [self addChildViewController:controller];
         controller.view.frame = CGRectMake(targetx, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
@@ -213,14 +194,12 @@ const float PAGERTABBAR_HEIGHT = 40;
         controller.view.frame = CGRectMake(targetx, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         controller.view.hidden = NO;
     }
-    self.viewsInScrollview[targetIndex] = controller.view;
     if (index-1 >= 0) {
         UIViewController *leftController = self.onViewControllers[index-1];
         if ([leftController isKindOfClass:[UIViewController class]] && leftController.parentViewController != nil) {
             CGSize size = self.scrollView.bounds.size;
             leftController.view.frame = CGRectMake(targetx - size.width, 0, size.width, size.height);
             leftController.view.hidden = NO;
-            self.viewsInScrollview[targetIndex-1] = leftController.view;
         }
     }
     if (index+1 < _vcsNumber) {
@@ -229,10 +208,9 @@ const float PAGERTABBAR_HEIGHT = 40;
             CGSize size = self.scrollView.bounds.size;
             rightController.view.frame = CGRectMake(targetx + size.width, 0, size.width, size.height);
             rightController.view.hidden = NO;
-            self.viewsInScrollview[targetIndex+1] = rightController.view;
         }
     }
-    [self.scrollView setContentOffset:CGPointMake(self.scrollView.bounds.size.width * targetIndex, 0) animated:NO];
+    [self.scrollView setContentOffset:CGPointMake(targetx, 0) animated:NO];
     [self callDelegateAtIndex:index withObject:[NSNumber numberWithBool:_firstShown]];
 }
 
@@ -318,16 +296,6 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 - (NSInteger)selectedIndex {
     return self.topTabBar.selectedIndex;
-}
-
-- (NSMutableArray *)viewsInScrollview {
-    if (!_viewsInScrollview) {
-        _viewsInScrollview = [NSMutableArray array];
-        for (NSInteger i = 0; i < _actualVCCount; i++) {
-            [_viewsInScrollview addObject:[NSNull null]];
-        }
-    }
-    return _viewsInScrollview;
 }
 
 - (NSMutableArray *)onViewControllers {
