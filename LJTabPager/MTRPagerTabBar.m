@@ -1,6 +1,6 @@
 //
-//  LJPagerTabBar.m
-//  LJTabPager
+//  MTRPagerTabBar.m
+//  MTRTabPager
 //
 //  Created by 李剑 on 17/2/22.
 //  Copyright © 2017年 mutouren. All rights reserved.
@@ -11,9 +11,9 @@
 #define ANIMATE_DURATION 0.25
 extern float PAGERTABBAR_HEIGHT;
 
-#import "LJPagerTabBar.h"
+#import "MTRPagerTabBar.h"
 
-@interface LJPagerTabBar ()
+@interface MTRPagerTabBar ()
 
 @property (nonatomic) NSArray *tabItems;
 @property (nonatomic) UIView *selectedLine;
@@ -25,7 +25,7 @@ extern float PAGERTABBAR_HEIGHT;
 
 @end
 
-@implementation LJPagerTabBar
+@implementation MTRPagerTabBar
 {
     CGFloat _totalWidth; //所有tabItems的宽度之和
     BOOL _needsLayoutTabItems;

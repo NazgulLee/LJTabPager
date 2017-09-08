@@ -1,13 +1,13 @@
 //
-//  LJTabPagerVC.m
-//  LJTabPager
+//  MTRTabPagerVC.m
+//  MTRTabPager
 //
 //  Created by 李剑 on 17/2/22.
 //  Copyright © 2017年 mutouren. All rights reserved.
 //
 
-#import "LJTabPagerVC.h"
-#import "LJPagerTabBar.h"
+#import "MTRTabPagerVC.h"
+#import "MTRPagerTabBar.h"
 
 #define CONTENT_SCROLLVIEW 1000
 #define PAGERTABBAR_SCROLLVIEW 1001
@@ -18,16 +18,16 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 
-@interface LJTabPagerVC () <UIScrollViewDelegate, LJPagerTabBarDelegate>
+@interface MTRTabPagerVC () <UIScrollViewDelegate, MTRPagerTabBarDelegate>
 
 @property (nonatomic) NSArray *titles; /// 每次设置titles会使topTabBar重新布局
-@property (nonatomic) LJPagerTabBar *topTabBar;
+@property (nonatomic) MTRPagerTabBar *topTabBar;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) NSMutableArray *onViewControllers; //!< 存放已加载的视图控制器
 
 @end
 
-@implementation LJTabPagerVC
+@implementation MTRTabPagerVC
 {
     BOOL _isScrollCausedByDragging; //!< 标识下方的scrollView滑动是因为用户直接滑动还是因为用户点选topTabBar的tabItem导致的
     CGFloat _initialContentOffsetX; //!< 一次滑动开始时scrollView的contentOffset
@@ -135,7 +135,7 @@ const float PAGERTABBAR_HEIGHT = 40;
 - (void)callDelegateAtIndex:(NSInteger)index withObject:(NSNumber *)object{
     UIViewController *controller = self.onViewControllers[index];
     if ([controller isKindOfClass:[UIViewController class]]) {
-        if ([controller conformsToProtocol:@protocol(LJTabPagerVCDelegate)]) {
+        if ([controller conformsToProtocol:@protocol(MTRTabPagerVCDelegate)]) {
             if ([controller respondsToSelector:@selector(hasBeenSelectedAndShown:)]) {
                 [controller performSelector:@selector(hasBeenSelectedAndShown:) withObject:object afterDelay:0];
             }
@@ -172,7 +172,7 @@ const float PAGERTABBAR_HEIGHT = 40;
     }
 }
 
-#pragma LJPagerTabBarDelegate
+#pragma MTRPagerTabBarDelegate
 - (void)showViewAtIndex:(NSInteger)index {
     BOOL _firstShown = NO;
     _isScrollCausedByDragging = NO;
@@ -214,14 +214,14 @@ const float PAGERTABBAR_HEIGHT = 40;
 }
 
 #pragma mark - Accessor Methods
-- (void)setVcsSource:(id<LJTabPagerVCsSource>)vcsSource {
+- (void)setVcsSource:(id<MTRTabPagerVCsSource>)vcsSource {
     
     _vcsSource = vcsSource;
 }
 
-- (LJPagerTabBar *)topTabBar {
+- (MTRPagerTabBar *)topTabBar {
     if (!_topTabBar) {
-        _topTabBar = [[LJPagerTabBar alloc] init];
+        _topTabBar = [[MTRPagerTabBar alloc] init];
         _topTabBar.backgroundColor = self.tabBarBKColor;
         _topTabBar.pagerTabBarDelegate = self;
     }

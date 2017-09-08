@@ -1,13 +1,13 @@
 //
 //  AppDelegate.m
-//  LJTabPager
+//  MTRTabPager
 //
 //  Created by 李剑 on 17/2/22.
 //  Copyright © 2017年 mutouren. All rights reserved.
 //
 
 #import "AppDelegate.h"
-#import "LJTabPagerVC.h"
+#import "MTRTabPagerVC.h"
 #import "TableViewController.h"
 #import "VcsSource.h"
 
@@ -23,7 +23,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch. 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    LJTabPagerVC *pagerVC = [[LJTabPagerVC alloc] init];
+    MTRTabPagerVC *pagerVC = [[MTRTabPagerVC alloc] init];
     _source = [[VcsSource alloc] init];
     pagerVC.vcsSource = _source;
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];
