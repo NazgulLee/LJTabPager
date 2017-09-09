@@ -1,13 +1,15 @@
 //
-//  MTRTabPagerVC.m
+//  MTRTabPagerViewController.m
 //  MTRTabPager
 //
 //  Created by 李剑 on 17/2/22.
 //  Copyright © 2017年 mutouren. All rights reserved.
 //
 
-#import "MTRTabPagerVC.h"
+#import "MTRTabPagerViewController.h"
 #import "MTRPagerTabBar.h"
+#import "MTRProtocols.h"
+#import "UITableViewCell+MTRRecycle.h"
 
 #define CONTENT_SCROLLVIEW 1000
 #define PAGERTABBAR_SCROLLVIEW 1001
@@ -18,16 +20,21 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 
-@interface MTRTabPagerVC () <UIScrollViewDelegate, MTRPagerTabBarDelegate>
+@interface MTRTabPagerViewController () <UIScrollViewDelegate, MTRPagerTabBarDelegate>
 
 @property (nonatomic) NSArray *titles; /// 每次设置titles会使topTabBar重新布局
 @property (nonatomic) MTRPagerTabBar *topTabBar;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) NSMutableArray *onViewControllers; //!< 存放已加载的视图控制器
 
+// MTRTabPagerViewController+Recycle
+@property (nonatomic) NSMutableDictionary *mtrReusableCells;
+@property (nonatomic) NSMutableDictionary *mtrClassReuseIdentifierPairs;
+@property (nonatomic) NSMutableDictionary *usingCells;
+
 @end
 
-@implementation MTRTabPagerVC
+@implementation MTRTabPagerViewController
 {
     BOOL _isScrollCausedByDragging; //!< 标识下方的scrollView滑动是因为用户直接滑动还是因为用户点选topTabBar的tabItem导致的
     CGFloat _initialContentOffsetX; //!< 一次滑动开始时scrollView的contentOffset
@@ -42,6 +49,15 @@ const float PAGERTABBAR_HEIGHT = 40;
 @synthesize tabBarBKColor = _tabBarBKColor;
 @synthesize selectedLineColor = _selectedLineColor;
 @synthesize selectedTabItemColor = _selectedTabItemColor;
+
++ (instancetype)sharedInstance {
+    static MTRTabPagerViewController *instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[self alloc] init];
+    });
+    return instance;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -174,6 +190,8 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #pragma MTRPagerTabBarDelegate
 - (void)showViewAtIndex:(NSInteger)index {
+    [self recycleControllerAroundIndex:index];
+    
     BOOL _firstShown = NO;
     _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
@@ -192,13 +210,16 @@ const float PAGERTABBAR_HEIGHT = 40;
     } else {
         controller.view.frame = CGRectMake(targetx, 0, self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         controller.view.hidden = NO;
+        [self reloadRecyclingController:controller];
     }
+    
     if (index-1 >= 0) {
         UIViewController *leftController = self.onViewControllers[index-1];
         if ([leftController isKindOfClass:[UIViewController class]] && leftController.parentViewController != nil) {
             CGSize size = self.scrollView.bounds.size;
             leftController.view.frame = CGRectMake(targetx - size.width, 0, size.width, size.height);
             leftController.view.hidden = NO;
+            [self reloadRecyclingController:leftController];
         }
     }
     if (index+1 < _vcsNumber) {
@@ -207,10 +228,65 @@ const float PAGERTABBAR_HEIGHT = 40;
             CGSize size = self.scrollView.bounds.size;
             rightController.view.frame = CGRectMake(targetx + size.width, 0, size.width, size.height);
             rightController.view.hidden = NO;
+            [self reloadRecyclingController:rightController];
         }
     }
+    [self restoreMovedCells];
     [self.scrollView setContentOffset:CGPointMake(targetx, 0) animated:NO];
     [self callDelegateAtIndex:index withObject:[NSNumber numberWithBool:_firstShown]];
+}
+
+- (void)restoreMovedCells {
+    for (NSString *identifier in self.usingCells.allKeys) {
+        NSMutableSet *cells = self.usingCells[identifier];
+        for (UITableViewCell *cell in cells) {
+            if (cell.superview == nil)
+                [cell.mtrTableView addSubview:cell];
+        }
+    }
+}
+
+- (void)reloadRecyclingController:(UIViewController *)controller {
+    if ([controller conformsToProtocol:@protocol(MTRRecycleControllerProtocol)]) {
+        NSArray *participatingContainerViews = [controller performSelector:@selector(mtrParticipateRecycleViews)];
+        for (UIView *view in participatingContainerViews) {
+            if ([view isKindOfClass:[MTRTableView class]]) {
+                MTRTableView *tableView = (MTRTableView *)view;
+                if (tableView.mtrIsDirty) {
+                    tableView.pauseRecycling = YES;
+                    NSMutableArray *unusedCells = [NSMutableArray array];
+                    for (UITableViewCell *cell in [tableView visibleCells]) {
+                        if (![self.usingCells[cell.mtrReuseIdentifier] containsObject:cell])
+                            [unusedCells addObject:cell];
+                    }
+                    [self mtrRecycleCells:unusedCells];
+                    [tableView reloadData];
+                    tableView.mtrIsDirty = NO;
+                    tableView.pauseRecycling = NO;
+                }
+            }
+        }
+    }
+}
+
+- (void)recycleControllerAroundIndex:(NSInteger)index {
+    for (NSInteger i = 0; i < _vcsNumber; i++) {
+        if (labs(i-index) > 1) {
+            UIViewController *controller = self.onViewControllers[i];
+            if ([controller isKindOfClass:[UIViewController class]] && [controller conformsToProtocol:@protocol(MTRRecycleControllerProtocol)]) {
+                NSArray *participatingContainerViews = [controller performSelector:@selector(mtrParticipateRecycleViews)];
+                for (UIView *view in participatingContainerViews) {
+                    if ([view isKindOfClass:[MTRTableView class]]) {
+                        MTRTableView *tableView = (MTRTableView *)view;
+                        if (!tableView.mtrIsDirty) {
+                            [self mtrRecycleCells:[tableView visibleCells]];
+                            tableView.mtrIsDirty = YES;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 #pragma mark - Accessor Methods
@@ -307,5 +383,91 @@ const float PAGERTABBAR_HEIGHT = 40;
     }
     return _onViewControllers;
 }
+
+// MTRTabPagerViewController+Recycle
+- (NSMutableDictionary *)mtrClassReuseIdentifierPairs {
+    if (!_mtrClassReuseIdentifierPairs) {
+        _mtrClassReuseIdentifierPairs = [NSMutableDictionary dictionary];
+    }
+    return _mtrClassReuseIdentifierPairs;
+}
+
+- (NSMutableDictionary *)mtrReusableCells {
+    if (!_mtrReusableCells) {
+        _mtrReusableCells = [[NSMutableDictionary alloc] init];
+    }
+    return _mtrReusableCells;
+}
+
+
+- (NSMutableDictionary *)usingCells {
+    if (!_usingCells) {
+        _usingCells = [NSMutableDictionary dictionary];
+    }
+    return _usingCells;
+}
+
+- (UITableViewCell *)mtrDequeReusableCellForTableView:(MTRTableView *)tableView WithIdentifier:(NSString *)identifier {
+    NSMutableSet *reusableCells = self.mtrReusableCells[identifier];
+    if (reusableCells.count > 0) {
+        for (UITableViewCell *cell in reusableCells) {
+            MTRTableView *originTableView = cell.mtrTableView;
+            CGRect tableViewRect = [tableView.superview convertRect:tableView.frame toView:self.scrollView];
+            CGRect originTableViewRect = [originTableView.superview convertRect:originTableView.frame toView:self.scrollView];
+            CGFloat distance = tableViewRect.origin.x - originTableViewRect.origin.x;
+            CGFloat width = [UIScreen mainScreen].bounds.size.width;
+            if ([self isRectZero:originTableViewRect] || distance < -width || distance > width || distance == 0) {
+                NSMutableSet *dequedCells = self.usingCells[identifier];
+                if (!dequedCells) {
+                    dequedCells = [NSMutableSet set];
+                    self.usingCells[identifier] = dequedCells;
+                }
+                [dequedCells addObject:cell];
+                [reusableCells removeObject:cell];
+                //[cell prepareForReuse];
+                cell.mtrTableView = tableView;
+                return cell;
+            }
+        }
+    }
+    Class cellClass = self.mtrClassReuseIdentifierPairs[identifier];
+    UITableViewCell *cell = [[cellClass alloc] init];
+    static NSInteger count = 0;
+    count++;
+    cell.textLabel.text = [NSString stringWithFormat:@"%ld", count];
+    cell.mtrReuseIdentifier = identifier;
+    cell.mtrTableView = tableView;
+    NSMutableSet *dequedCells = self.usingCells[identifier];
+    if (!dequedCells) {
+        dequedCells = [NSMutableSet set];
+        self.usingCells[identifier] = dequedCells;
+    }
+    [dequedCells addObject:cell];
+    return cell;
+}
+
+- (BOOL)isRectZero:(CGRect)rect {
+    return rect.origin.x == 0 && rect.origin.y == 0 && rect.size.height == 0 && rect.size.width == 0;
+}
+- (void)mtrRegisterClass:(Class)cellClass forCellReuseIdentifier:(NSString *)identifier {
+    self.mtrClassReuseIdentifierPairs[identifier] = cellClass;
+}
+#pragma mark - MTRTabPagerReuseDelegate
+- (void)mtrRecycleCells:(NSArray *)cells {
+    for (UITableViewCell *cell in cells) {
+        if (cell.mtrReuseIdentifier) {
+            NSMutableSet *recycledCells = self.mtrReusableCells[cell.mtrReuseIdentifier];
+            if (!recycledCells) {
+                recycledCells = [NSMutableSet set];
+                self.mtrReusableCells[cell.mtrReuseIdentifier] = recycledCells;
+            }
+            [recycledCells addObject:cell];
+            NSMutableSet *dequedCells = self.usingCells[cell.mtrReuseIdentifier];
+            if (dequedCells)
+                [dequedCells removeObject:cell];
+        }
+    }
+}
+
 
 @end
