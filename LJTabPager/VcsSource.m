@@ -8,18 +8,8 @@
 
 #import "VcsSource.h"
 #import "TableViewController.h"
-#import "MTRTableViewController.h"
 
 @implementation VcsSource
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [[MTRTabPagerViewController sharedInstance] mtrRegisterClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-    }
-    return self;
-}
-
 - (NSInteger)numberOfViewControllers {
     return 8;
 }
@@ -31,10 +21,7 @@
 }
 
 - (UIViewController *)viewControllerAtIndex:(NSInteger)index {
-
-    //TableViewController *controller = [[TableViewController alloc] init];
-    MTRTableViewController *controller = [[MTRTableViewController alloc] init];
-    controller.reuseDelegate = [MTRTabPagerViewController sharedInstance];
+    TableViewController *controller = [[TableViewController alloc] init];
     switch (index) {
         case 0:
             controller.title = @"个性推荐";

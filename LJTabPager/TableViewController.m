@@ -7,7 +7,7 @@
 //
 
 #import "TableViewController.h"
-#import "MTRTabPagerViewController.h"
+#import "MTRTabPagerVC.h"
 
 @interface TableViewController ()<UIScrollViewDelegate, MTRTabPagerVCDelegate>
 
