@@ -8,6 +8,7 @@
 
 #import "VcsSource.h"
 #import "TableViewController.h"
+#import "MTRViewController.h"
 
 @implementation VcsSource
 - (NSInteger)numberOfViewControllers {
@@ -21,7 +22,8 @@
 }
 
 - (UIViewController *)viewControllerAtIndex:(NSInteger)index {
-    TableViewController *controller = [[TableViewController alloc] init];
+    //TableViewController *controller = [[TableViewController alloc] init];
+    MTRViewController *controller = [[MTRViewController alloc] init];
     switch (index) {
         case 0:
             controller.title = @"个性推荐";

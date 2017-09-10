@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "MTRTabPagerVC.h"
+#import "MTRTabPagerViewController.h"
 #import "TableViewController.h"
 #import "VcsSource.h"
 
@@ -23,7 +23,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch. 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    MTRTabPagerVC *pagerVC = [[MTRTabPagerVC alloc] init];
+    MTRTabPagerViewController *pagerVC = [MTRTabPagerViewController sharedInstance];
     _source = [[VcsSource alloc] init];
     pagerVC.vcsSource = _source;
     UINavigationController *rootVC = [[UINavigationController alloc] initWithRootViewController:pagerVC];

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MTRTabPagerVC.h"
+#import "MTRTabPagerViewController.h"
 
 @interface VcsSource : NSObject <MTRTabPagerVCsSource>
 

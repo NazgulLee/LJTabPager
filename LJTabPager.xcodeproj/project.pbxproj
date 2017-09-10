@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		301C0F551F4DA1EA008221A2 /* VcsSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 301C0F541F4DA1EA008221A2 /* VcsSource.m */; };
+		301EC5DE1F64CA2B00E4CCC8 /* MTRTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 301EC5DD1F64CA2B00E4CCC8 /* MTRTableView.m */; };
+		301EC5E21F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.m in Sources */ = {isa = PBXBuildFile; fileRef = 301EC5E11F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.m */; };
+		301EC5E51F64D0AE00E4CCC8 /* MTRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 301EC5E41F64D0AE00E4CCC8 /* MTRViewController.m */; };
 		307F44521E8FC17100ECF3DD /* MTRPagerTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F444F1E8FC17100ECF3DD /* MTRPagerTabBar.m */; };
-		307F44531E8FC17100ECF3DD /* MTRTabPagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F44511E8FC17100ECF3DD /* MTRTabPagerVC.m */; };
+		307F44531E8FC17100ECF3DD /* MTRTabPagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 307F44511E8FC17100ECF3DD /* MTRTabPagerViewController.m */; };
 		30E713C11E5D9A0300099E81 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713C01E5D9A0300099E81 /* main.m */; };
 		30E713C41E5D9A0300099E81 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E713C31E5D9A0300099E81 /* AppDelegate.m */; };
 		30E713CA1E5D9A0300099E81 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 30E713C81E5D9A0300099E81 /* Main.storyboard */; };
@@ -21,10 +24,17 @@
 /* Begin PBXFileReference section */
 		301C0F531F4DA1EA008221A2 /* VcsSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VcsSource.h; sourceTree = "<group>"; };
 		301C0F541F4DA1EA008221A2 /* VcsSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VcsSource.m; sourceTree = "<group>"; };
+		301EC5DC1F64CA2B00E4CCC8 /* MTRTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRTableView.h; sourceTree = "<group>"; };
+		301EC5DD1F64CA2B00E4CCC8 /* MTRTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRTableView.m; sourceTree = "<group>"; };
+		301EC5DF1F64CB7D00E4CCC8 /* MTRRecycleProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRRecycleProtocols.h; sourceTree = "<group>"; };
+		301EC5E01F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+MTRRecycle.h"; sourceTree = "<group>"; };
+		301EC5E11F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+MTRRecycle.m"; sourceTree = "<group>"; };
+		301EC5E31F64D0AE00E4CCC8 /* MTRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRViewController.h; sourceTree = "<group>"; };
+		301EC5E41F64D0AE00E4CCC8 /* MTRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRViewController.m; sourceTree = "<group>"; };
 		307F444E1E8FC17100ECF3DD /* MTRPagerTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRPagerTabBar.h; sourceTree = "<group>"; };
 		307F444F1E8FC17100ECF3DD /* MTRPagerTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRPagerTabBar.m; sourceTree = "<group>"; };
-		307F44501E8FC17100ECF3DD /* MTRTabPagerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRTabPagerVC.h; sourceTree = "<group>"; };
-		307F44511E8FC17100ECF3DD /* MTRTabPagerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRTabPagerVC.m; sourceTree = "<group>"; };
+		307F44501E8FC17100ECF3DD /* MTRTabPagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRTabPagerViewController.h; sourceTree = "<group>"; };
+		307F44511E8FC17100ECF3DD /* MTRTabPagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRTabPagerViewController.m; sourceTree = "<group>"; };
 		30E713BC1E5D9A0300099E81 /* LJTabPager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LJTabPager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30E713C01E5D9A0300099E81 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		30E713C21E5D9A0300099E81 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -79,6 +89,8 @@
 				30E713D01E5D9A0300099E81 /* Info.plist */,
 				30E713E21E5ED72100099E81 /* LJTabPager */,
 				30E713BF1E5D9A0300099E81 /* Supporting Files */,
+				301EC5E31F64D0AE00E4CCC8 /* MTRViewController.h */,
+				301EC5E41F64D0AE00E4CCC8 /* MTRViewController.m */,
 			);
 			path = LJTabPager;
 			sourceTree = "<group>";
@@ -94,10 +106,15 @@
 		30E713E21E5ED72100099E81 /* LJTabPager */ = {
 			isa = PBXGroup;
 			children = (
-				307F44501E8FC17100ECF3DD /* MTRTabPagerVC.h */,
-				307F44511E8FC17100ECF3DD /* MTRTabPagerVC.m */,
+				307F44501E8FC17100ECF3DD /* MTRTabPagerViewController.h */,
+				307F44511E8FC17100ECF3DD /* MTRTabPagerViewController.m */,
 				307F444E1E8FC17100ECF3DD /* MTRPagerTabBar.h */,
 				307F444F1E8FC17100ECF3DD /* MTRPagerTabBar.m */,
+				301EC5DC1F64CA2B00E4CCC8 /* MTRTableView.h */,
+				301EC5DD1F64CA2B00E4CCC8 /* MTRTableView.m */,
+				301EC5DF1F64CB7D00E4CCC8 /* MTRRecycleProtocols.h */,
+				301EC5E01F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.h */,
+				301EC5E11F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.m */,
 			);
 			name = LJTabPager;
 			sourceTree = "<group>";
@@ -177,8 +194,11 @@
 				30E713C41E5D9A0300099E81 /* AppDelegate.m in Sources */,
 				301C0F551F4DA1EA008221A2 /* VcsSource.m in Sources */,
 				30E713C11E5D9A0300099E81 /* main.m in Sources */,
-				307F44531E8FC17100ECF3DD /* MTRTabPagerVC.m in Sources */,
+				307F44531E8FC17100ECF3DD /* MTRTabPagerViewController.m in Sources */,
 				30E713E11E5DD48600099E81 /* TableViewController.m in Sources */,
+				301EC5E51F64D0AE00E4CCC8 /* MTRViewController.m in Sources */,
+				301EC5E21F64CC7200E4CCC8 /* UITableViewCell+MTRRecycle.m in Sources */,
+				301EC5DE1F64CA2B00E4CCC8 /* MTRTableView.m in Sources */,
 				307F44521E8FC17100ECF3DD /* MTRPagerTabBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
