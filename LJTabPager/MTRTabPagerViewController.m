@@ -364,6 +364,13 @@ const float PAGERTABBAR_HEIGHT = 40;
     NSMutableSet *reusableCells = self.mtrReusableCellsDic[identifier];
     if (reusableCells.count > 0) {
         UITableViewCell *cell = [reusableCells anyObject];
+        if (tableView.superview) {
+            CGRect rect = [tableView.superview convertRect:tableView.frame toView:[UIApplication sharedApplication].delegate.window];
+            CGFloat width = [UIScreen mainScreen].bounds.size.width;
+            if (rect.origin.x <= -2*width || rect.origin.x >= width)
+                return cell; //如果tableview离屏幕太远，直接返回cell，但是不从重用池中删除
+        }
+        
         cell.mtrTableView = tableView;
         NSMutableSet *inUsingCells = self.mtrInUsingCellsDic[identifier];
         if (inUsingCells == nil) {

@@ -10,7 +10,7 @@
 #import "MTRTableView.h"
 #import "MTRTabPagerViewController.h"
 
-@interface MTRViewController () <UITableViewDataSource>
+@interface MTRViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic) MTRTableView *tableView;
 @end
 
@@ -47,6 +47,10 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%ld cells", self.tableView.visibleCells.count);
+}
+
 - (NSArray *)mtrParticipatingContainerViews {
     return @[self.tableView];
 }
@@ -55,6 +59,7 @@
     if (!_tableView) {
         _tableView = [[MTRTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.dataSource = self;
+        _tableView.delegate = self;
         _tableView.mtrRecycleDelegate = [MTRTabPagerViewController sharedInstance];
         _tableView.mtrRecycleDataSource = [MTRTabPagerViewController sharedInstance];
         [_tableView.mtrRecycleDataSource mtrRegisterClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];

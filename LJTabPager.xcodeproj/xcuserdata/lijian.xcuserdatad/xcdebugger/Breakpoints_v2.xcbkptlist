@@ -509,11 +509,11 @@
             condition = "count == 42"
             continueAfterRunningActions = "Yes"
             filePath = "LJTabPager/MTRTabPagerViewController.m"
-            timestampString = "526705154.574831"
+            timestampString = "526732499.3894"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
             landmarkName = "-mtrDequeReusableCellForTableView:withReuseIdentifier:"
             landmarkType = "7">
          </BreakpointContent>
@@ -603,11 +603,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "LJTabPager/MTRViewController.m"
-            timestampString = "526726713.319792"
+            timestampString = "526730625.105257"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "7">
             <Actions>
@@ -733,11 +733,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/MTRTabPagerViewController.m"
-            timestampString = "526712325.860488"
+            timestampString = "526732499.3894"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "392"
-            endingLineNumber = "392"
+            startingLineNumber = "399"
+            endingLineNumber = "399"
             landmarkName = "-mtrDequeReusableCellForTableView:withReuseIdentifier:"
             landmarkType = "7">
          </BreakpointContent>
@@ -749,11 +749,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LJTabPager/MTRTabPagerViewController.m"
-            timestampString = "526721524.028211"
+            timestampString = "526732499.3894"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
+            startingLineNumber = "429"
+            endingLineNumber = "429"
             landmarkName = "-mtrRecycleViewControllers"
             landmarkType = "7">
          </BreakpointContent>
