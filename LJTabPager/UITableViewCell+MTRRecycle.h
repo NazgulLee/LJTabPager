@@ -12,4 +12,6 @@
 @interface UITableViewCell (MTRRecycle)
 @property (nonatomic, weak) MTRTableView *mtrTableView;
 @property (nonatomic, copy) NSString *mtrReuseIdentifier;
+@property (nonatomic, weak) UIView *mtrSuperView;
+@property (nonatomic) CGRect mtrFrame;
 @end

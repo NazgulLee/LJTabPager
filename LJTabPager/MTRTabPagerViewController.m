@@ -18,6 +18,8 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 
+#define MTR_MAX_CACHED_CELLS_COUNT 45
+
 @interface MTRTabPagerViewController () <UIScrollViewDelegate, MTRPagerTabBarDelegate>
 
 @property (nonatomic) NSArray *titles; /// 每次设置titles会使topTabBar重新布局
@@ -29,8 +31,9 @@ const float PAGERTABBAR_HEIGHT = 40;
 @property (nonatomic) NSMutableDictionary *mtrReusableCellsDic;
 @property (nonatomic) NSMutableDictionary *mtrInUsingCellsDic;
 @property (nonatomic) NSMutableDictionary *mtrCellClassAndReuseIdentifierDic;
-- (void)mtrRecycleViewControllers;
+- (void)mtrRecycleViewControllersAroundIndex:(NSInteger)index;
 - (void)mtrReloadViewController:(UIViewController *)controller;
+- (void)mtrCheckAndClearCellCache;
 @end
 
 @implementation MTRTabPagerViewController
@@ -69,7 +72,11 @@ const float PAGERTABBAR_HEIGHT = 40;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
     [self configureViews];
     _initialSelectedIndex = self.topTabBar.selectedIndex;
-    [self loadVCs];
+    if (self.vcsSource) {
+        _vcsNumber = [self.vcsSource numberOfViewControllers];
+        self.titles = [self.vcsSource titles];
+        NSAssert(_vcsNumber == self.titles.count, @"[vcsSource titles].count must equal to [vcsSource numberOfViewControllers]");
+    }
 }
 
 - (void)configureViews {
@@ -110,7 +117,7 @@ const float PAGERTABBAR_HEIGHT = 40;
         self.scrollView.contentSize = CGSizeMake(_vcsNumber * self.scrollView.bounds.size.width, self.scrollView.bounds.size.height);
         [self showViewAtIndex:self.selectedIndex];
     }
-    
+    [self mtrCheckAndClearCellCache];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -144,6 +151,8 @@ const float PAGERTABBAR_HEIGHT = 40;
         }
         if (!exceptSelected)
             [self loadVCs];
+        [self.mtrReusableCellsDic removeAllObjects];
+        [self.mtrInUsingCellsDic removeAllObjects];
     }
 }
 
@@ -189,7 +198,7 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #pragma MTRPagerTabBarDelegate
 - (void)showViewAtIndex:(NSInteger)index {
-    [self mtrRecycleViewControllers];
+    [self mtrRecycleViewControllersAroundIndex:index];
     BOOL _firstShown = NO;
     _isScrollCausedByDragging = NO;
     [self.topTabBar checkSelectedTabItemVisible];
@@ -228,6 +237,7 @@ const float PAGERTABBAR_HEIGHT = 40;
             [self mtrReloadViewController:rightController];
         }
     }
+    controller.view.hidden = NO;
     [self.scrollView setContentOffset:CGPointMake(targetx, 0) animated:NO];
     [self callDelegateAtIndex:index withObject:[NSNumber numberWithBool:_firstShown]];
 }
@@ -257,6 +267,8 @@ const float PAGERTABBAR_HEIGHT = 40;
         _scrollView.bounces = NO;
         _scrollView.directionalLockEnabled = YES;
         _scrollView.delaysContentTouches = YES;
+//        _scrollView.showsHorizontalScrollIndicator = NO;
+//        _scrollView.showsVerticalScrollIndicator = NO;
     }
     return _scrollView;
 }
@@ -354,6 +366,8 @@ const float PAGERTABBAR_HEIGHT = 40;
 
 #import "UITableViewCell+MTRRecycle.h"
 #import "MTRTableView.h"
+
+static NSString *MTRTableViewPlaceholderCellIdentifier = @"MTRTableViewPlaceholderCellIdentifier";
 @implementation MTRTabPagerViewController (MTRRecycle)
 
 - (void)mtrRegisterClass:(Class)cellClass forCellReuseIdentifier:(NSString *)identifier {
@@ -361,16 +375,24 @@ const float PAGERTABBAR_HEIGHT = 40;
 }
 
 - (UITableViewCell *)mtrDequeReusableCellForTableView:(MTRTableView *)tableView withReuseIdentifier:(NSString *)identifier {
-    NSMutableSet *reusableCells = self.mtrReusableCellsDic[identifier];
-    if (reusableCells.count > 0) {
-        UITableViewCell *cell = [reusableCells anyObject];
-        if (tableView.superview) {
-            CGRect rect = [tableView.superview convertRect:tableView.frame toView:[UIApplication sharedApplication].delegate.window];
-            CGFloat width = [UIScreen mainScreen].bounds.size.width;
-            if (rect.origin.x <= -2*width || rect.origin.x >= width)
-                return cell; //如果tableview离屏幕太远，直接返回cell，但是不从重用池中删除
+    if (tableView.superview) {
+        CGRect rect = [tableView.superview convertRect:tableView.frame toView:[UIApplication sharedApplication].delegate.window.rootViewController.view];
+        CGFloat width = [UIScreen mainScreen].bounds.size.width;
+        if (rect.origin.x < -2*width-200 || rect.origin.x > width+200) {
+            static UITableViewCell *placeHolderCell;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                placeHolderCell = [[UITableViewCell alloc] init];
+            });
+            placeHolderCell.mtrReuseIdentifier = MTRTableViewPlaceholderCellIdentifier;
+            
+            return placeHolderCell; //如果tableview离屏幕太远，返回占位cell
         }
         
+    }
+    NSMutableSet *reusableCells = self.mtrReusableCellsDic[identifier];
+    if (tableView.mtrCallingLayoutSubviews && reusableCells.count > 0) {
+        UITableViewCell *cell = [reusableCells anyObject];
         cell.mtrTableView = tableView;
         NSMutableSet *inUsingCells = self.mtrInUsingCellsDic[identifier];
         if (inUsingCells == nil) {
@@ -388,9 +410,11 @@ const float PAGERTABBAR_HEIGHT = 40;
     UITableViewCell *cell = [[cellClass alloc] init];
     static NSInteger count = 0;
     count++;
+    NSLog(@"cell count: %ld", count);
     cell.textLabel.text = [NSString stringWithFormat:@"%ld", count];
     cell.mtrTableView = tableView;
     cell.mtrReuseIdentifier = identifier;
+    cell.mtrFrame = CGRectNull;
     NSMutableSet *inUsingCells = self.mtrInUsingCellsDic[identifier];
     if (inUsingCells == nil) {
         inUsingCells = [NSMutableSet set];
@@ -403,21 +427,26 @@ const float PAGERTABBAR_HEIGHT = 40;
 - (void)mtrRecycleReusabelCells:(NSArray *)cells {
     if (cells.count > 0) {
         for (UITableViewCell *cell in cells) {
-            NSMutableSet *reusableCells = self.mtrReusableCellsDic[cell.mtrReuseIdentifier];
-            if (reusableCells == nil) {
-                reusableCells = [NSMutableSet set];
-                self.mtrReusableCellsDic[cell.mtrReuseIdentifier] = reusableCells;
+            if (cell.mtrReuseIdentifier != MTRTableViewPlaceholderCellIdentifier) {
+                NSMutableSet *reusableCells = self.mtrReusableCellsDic[cell.mtrReuseIdentifier];
+                if (reusableCells == nil) {
+                    reusableCells = [NSMutableSet set];
+                    self.mtrReusableCellsDic[cell.mtrReuseIdentifier] = reusableCells;
+                }
+                cell.mtrTableView = nil;
+                cell.mtrFrame = CGRectNull;
+                [cell removeFromSuperview];
+                [reusableCells addObject:cell];
+                NSMutableSet *inUsingCells = self.mtrInUsingCellsDic[cell.mtrReuseIdentifier];
+                if (inUsingCells)
+                    [inUsingCells removeObject:cell];
             }
-            cell.mtrTableView = nil;
-            [reusableCells addObject:cell];
-            NSMutableSet *inUsingCells = self.mtrInUsingCellsDic[cell.mtrReuseIdentifier];
-            if (inUsingCells)
-                [inUsingCells removeObject:cell];
         }
     }
 }
 
-- (void)mtrRecycleViewControllers {
+
+- (void)mtrRecycleViewControllersAroundIndex:(NSInteger)index {
     for (NSInteger i = 0; i < _vcsNumber; i++) {
         UIViewController *controller = self.onViewControllers[i];
         if ([controller isKindOfClass:[UIViewController class]] && [controller conformsToProtocol:@protocol(MTRViewControllerRecycleProtocol)]) {
@@ -426,12 +455,35 @@ const float PAGERTABBAR_HEIGHT = 40;
                 for (UIView *view in containerViews) {
                     if ([view isKindOfClass:[MTRTableView class]]) {
                         MTRTableView *tableView = (MTRTableView *)view;
-                        [self mtrRecycleReusabelCells:[tableView visibleCells]];
+                        if ((labs(i-index) > 1 || [self mtrIsVisibleCellsLessThanNeeded:tableView]) && ![self mtrIsTableViewRecycled:tableView]) {
+                            [self mtrRecycleReusabelCells:[tableView visibleCells]];
+                            controller.view.hidden = YES;
+                        }
+                        
                     }
                 }
             }
         }
     }
+}
+
+- (BOOL)mtrIsTableViewRecycled:(MTRTableView *)tableView {
+    NSArray *cells = [tableView visibleCells];
+    for (UITableViewCell *cell in cells) {
+        if (cell.mtrTableView != tableView)
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)mtrIsVisibleCellsLessThanNeeded:(MTRTableView *)tableView {
+    CGFloat height = 0;
+    for (UITableViewCell *cell in tableView.visibleCells) {
+        height += cell.bounds.size.height;
+    }
+    if (height < tableView.bounds.size.height)
+        return YES;
+    return NO;
 }
 
 - (void)mtrReloadViewController:(UIViewController *)controller {
@@ -441,8 +493,23 @@ const float PAGERTABBAR_HEIGHT = 40;
             for (UIView *view in containerViews) {
                 if ([view isKindOfClass:[MTRTableView class]]) {
                     MTRTableView *tableView = (MTRTableView *)view;
-                    [tableView reloadData];
+                    if ([self mtrIsTableViewRecycled:tableView] || [self mtrIsVisibleCellsLessThanNeeded:tableView]) {
+                        [tableView reloadData];
+                        controller.view.hidden = NO;
+                    }
                 }
+            }
+        }
+    }
+}
+
+- (void)mtrCheckAndClearCellCache {
+    for (NSString *identifier in self.mtrReusableCellsDic) {
+        NSMutableSet *reusableCells = self.mtrReusableCellsDic[identifier];
+        if (reusableCells.count > MTR_MAX_CACHED_CELLS_COUNT) {
+            while (reusableCells.count > MTR_MAX_CACHED_CELLS_COUNT/3) {
+                UITableViewCell *cell = [reusableCells anyObject];
+                [reusableCells removeObject:cell];
             }
         }
     }

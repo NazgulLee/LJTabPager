@@ -43,12 +43,13 @@
     //UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell == nil)
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-    //cell.textLabel.text = [NSString stringWithFormat:@"%ld", indexPath.row];
+    //cell.textLabel.text = self.title;
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%ld cells", self.tableView.visibleCells.count);
+    [[MTRTabPagerViewController sharedInstance] reloadVCsExceptSelected:NO];
 }
 
 - (NSArray *)mtrParticipatingContainerViews {

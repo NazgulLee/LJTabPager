@@ -22,4 +22,18 @@
 - (void)setMtrReuseIdentifier:(NSString *)mtrReuseIdentifier {
     objc_setAssociatedObject(self, @selector(mtrReuseIdentifier), mtrReuseIdentifier, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
+- (UIView *)mtrSuperView {
+    return objc_getAssociatedObject(self, @selector(mtrSuperView));
+}
+- (void)setMtrSuperView:(UIView *)mtrSuperView {
+    objc_setAssociatedObject(self, @selector(mtrSuperView), mtrSuperView, OBJC_ASSOCIATION_ASSIGN);
+}
+- (CGRect)mtrFrame {
+    NSValue *frameValue = objc_getAssociatedObject(self, @selector(mtrFrame));
+    return [frameValue CGRectValue];
+}
+- (void)setMtrFrame:(CGRect)mtrFrame {
+    NSValue *frameValue = [NSValue valueWithCGRect:mtrFrame];
+    objc_setAssociatedObject(self, @selector(mtrFrame), frameValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 @end

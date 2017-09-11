@@ -12,4 +12,5 @@
 @interface MTRTableView : UITableView
 @property (nonatomic, weak) id<MTRTableViewRecycleDelegate> mtrRecycleDelegate;
 @property (nonatomic, weak) id<MTRTableViewRecycleDataSource> mtrRecycleDataSource;
+@property (nonatomic, readonly) BOOL mtrCallingLayoutSubviews;
 @end
